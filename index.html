@@ -357,17 +357,39 @@
             margin-right: 0.25rem;
         }
 
-        .layer-controls-scroll {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+        /* Compact, evenly spaced Radar Layer Buttons next to OBS info */
+        .center-column .panel-header {
+            padding: 0.3rem 0.45rem;
+            gap: 0.4rem;
         }
 
-        .layer-controls-scroll::-webkit-scrollbar {
-            display: none;
+        .layer-controls-scroll {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.22rem;
+            overflow: hidden;
+        }
+
+        .layer-controls-scroll .tab-btn {
+            flex: 1 1 0;
+            min-width: 0;
+            font-size: 0.6rem;
+            letter-spacing: 0.3px;
+            padding: 0.14rem 0.2rem;
+            min-height: 21px;
+            height: 21px;
+            line-height: 1;
+        }
+
+        #radar-frame-timestamp {
+            font-size: 0.62rem;
+            color: var(--accent-green);
+            white-space: nowrap;
+            flex-shrink: 0;
+            padding-left: 0.15rem;
         }
 
         .filter-strip {
@@ -843,7 +865,24 @@
             }
 
             .center-column .panel-header {
-                padding: 0.26rem 0.45rem;
+                padding: 0.22rem 0.35rem;
+                gap: 0.3rem;
+            }
+
+            .layer-controls-scroll {
+                gap: 0.18rem;
+            }
+
+            .layer-controls-scroll .tab-btn {
+                font-size: 0.56rem;
+                letter-spacing: 0.2px;
+                padding: 0.12rem 0.15rem;
+                min-height: 20px;
+                height: 20px;
+            }
+
+            #radar-frame-timestamp {
+                font-size: 0.58rem;
             }
 
             .mobile-nav {
@@ -902,6 +941,19 @@
             .overwatch-logo {
                 width: 24px;
                 height: 24px;
+            }
+            .layer-controls-scroll {
+                gap: 0.14rem;
+            }
+            .layer-controls-scroll .tab-btn {
+                font-size: 0.53rem;
+                letter-spacing: 0;
+                padding: 0.1rem 0.12rem;
+                min-height: 19px;
+                height: 19px;
+            }
+            #radar-frame-timestamp {
+                font-size: 0.55rem;
             }
             .mobile-nav-btn {
                 font-size: 0.6rem;
@@ -1074,7 +1126,7 @@
                     <button class="tab-btn active" id="btn-boundaries" onclick="toggleBoundariesOverlay()" title="Toggle State/County Borders & City Labels Above Radar">BORDERS</button>
                     <button class="tab-btn" id="btn-map-theme" onclick="toggleMapOverlayStyle()" title="Switch Unlimited Map Basemap Style">STYLE</button>
                 </div>
-                <span id="radar-frame-timestamp" style="font-size: 0.66rem; color: var(--accent-green); white-space: nowrap;">SYNCING...</span>
+                <span id="radar-frame-timestamp">SYNCING...</span>
             </div>
 
             <div id="radar-map"></div>

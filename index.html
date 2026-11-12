@@ -285,6 +285,8 @@
 
         .header-telemetry {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
             gap: 0.85rem;
             font-family: var(--font-mono);
         }
@@ -292,6 +294,16 @@
         .telemetry-box {
             display: flex;
             flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .telemetry-wx-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .telemetry-wx-right .telemetry-box {
             align-items: flex-end;
         }
 
@@ -724,27 +736,27 @@
                 letter-spacing: 0.8px;
             }
 
-            /* Field 2: LOCAL TIME directly below OVERWATCH 100 */
+            /* Field 2: LOCAL TIME (Left) + TEMP & HUMIDITY (Right) */
             .header-telemetry {
                 width: 100%;
                 order: 2;
                 background: var(--bg-card);
                 border: 1px solid var(--border-color);
                 border-radius: 3px;
-                padding: 0.16rem 0.45rem;
+                padding: 0.18rem 0.45rem;
                 justify-content: space-between;
                 align-items: center;
+                gap: 0.5rem;
             }
 
             .header-telemetry .telemetry-box {
                 flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-                width: 100%;
+                align-items: baseline;
+                gap: 0.32rem;
             }
 
             .header-telemetry .telemetry-label {
-                font-size: 0.62rem;
+                font-size: 0.6rem;
             }
 
             .header-telemetry .telemetry-val {
@@ -752,7 +764,15 @@
                 color: var(--accent-cyan);
             }
 
-            .telemetry-box:nth-child(2) {
+            .telemetry-wx-right {
+                gap: 0.65rem;
+            }
+
+            .telemetry-wx-right .telemetry-box {
+                align-items: baseline;
+            }
+
+            .perimeter-box {
                 display: none;
             }
 
@@ -934,15 +954,25 @@
             </div>
         </div>
 
-        <!-- Field 2: LOCAL TIME (Stacked directly below OVERWATCH 100 on Mobile) -->
+        <!-- Field 2: LOCAL TIME (Left) + CURRENT TEMP & HUMIDITY (Right) -->
         <div class="header-telemetry">
             <div class="telemetry-box">
                 <span class="telemetry-label">LOCAL TIME</span>
                 <span class="telemetry-val" id="live-clock">--:--:--</span>
             </div>
-            <div class="telemetry-box">
-                <span class="telemetry-label">PERIMETER</span>
-                <span class="telemetry-val" style="color: var(--accent-cyan);">100.0 MI / 160.9 KM</span>
+            <div class="telemetry-wx-right">
+                <div class="telemetry-box">
+                    <span class="telemetry-label">TEMP</span>
+                    <span class="telemetry-val" id="header-wx-temp" style="color: var(--accent-cyan);">--°F</span>
+                </div>
+                <div class="telemetry-box">
+                    <span class="telemetry-label">HUMIDITY</span>
+                    <span class="telemetry-val" id="header-wx-humidity" style="color: var(--accent-green);">--%</span>
+                </div>
+                <div class="telemetry-box perimeter-box">
+                    <span class="telemetry-label">PERIMETER</span>
+                    <span class="telemetry-val" style="color: var(--accent-cyan);">100.0 MI / 160.9 KM</span>
+                </div>
             </div>
         </div>
 
@@ -1598,16 +1628,21 @@
                     95: 'Thunderstorm', 96: 'Thunderstorm w/ Hail', 99: 'Severe Thunderstorm'
                 };
 
-                document.getElementById('wx-temp').textContent = `${Math.round(cur.temperature_2m)}°F`;
+                const tempFormatted = `${Math.round(cur.temperature_2m)}°F`;
+                const humidityFormatted = `${cur.relative_humidity_2m}%`;
+
+                document.getElementById('wx-temp').textContent = tempFormatted;
+                document.getElementById('header-wx-temp').textContent = tempFormatted;
                 document.getElementById('wx-condition').textContent =
                     `${weatherCodeMap[cur.weather_code] || 'Active Conditions'} (Feels ${Math.round(cur.apparent_temperature)}°F)`;
                 document.getElementById('wx-wind').textContent =
                     `${Math.round(cur.wind_speed_10m)} / G${Math.round(cur.wind_gusts_10m)} mph`;
-                document.getElementById('wx-humidity').textContent = `${cur.relative_humidity_2m}%`;
+                document.getElementById('wx-humidity').textContent = humidityFormatted;
+                document.getElementById('header-wx-humidity').textContent = humidityFormatted;
                 const inHg = (cur.surface_pressure * 0.02953).toFixed(2);
                 document.getElementById('wx-pressure').textContent = `${inHg} inHg`;
 
-                logConsole('wx', 'SURFACE', `${currentSector.name}: ${Math.round(cur.temperature_2m)}°F, Wind ${Math.round(cur.wind_speed_10m)} mph.`);
+                logConsole('wx', 'SURFACE', `${currentSector.name}: ${tempFormatted}, Wind ${Math.round(cur.wind_speed_10m)} mph.`);
             } catch (err) {
                 document.getElementById('wx-condition').textContent = 'Surface Sensor Unavailable';
             }

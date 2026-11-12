@@ -56,12 +56,12 @@
         header {
             background-color: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
-            padding: 0 1rem;
-            height: 60px;
+            padding: 0 0.75rem;
+            height: 52px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             flex-shrink: 0;
             z-index: 600;
         }
@@ -70,21 +70,21 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 0.75rem;
+            gap: 0.5rem;
             min-width: 0;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.55rem;
             min-width: 0;
         }
 
         /* Custom Animated SVG Tactical Logo: OVERWATCH 100 */
         .overwatch-logo {
-            width: 38px;
-            height: 38px;
+            width: 34px;
+            height: 34px;
             flex-shrink: 0;
             filter: drop-shadow(0 0 7px rgba(0, 242, 254, 0.45));
         }
@@ -107,45 +107,45 @@
 
         .brand h1 {
             font-family: var(--font-mono);
-            font-size: 1.15rem;
-            letter-spacing: 2px;
+            font-size: 1.1rem;
+            letter-spacing: 1.8px;
             color: var(--accent-cyan);
-            line-height: 1.1;
+            line-height: 1.08;
             white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 0.35rem;
+            gap: 0.3rem;
         }
 
         .brand h1 .num-tag {
             background: rgba(0, 242, 254, 0.16);
             border: 1px solid rgba(0, 242, 254, 0.5);
             color: #ffffff;
-            font-size: 0.78rem;
-            padding: 0.04rem 0.35rem;
+            font-size: 0.74rem;
+            padding: 0.03rem 0.3rem;
             border-radius: 2px;
             letter-spacing: 1px;
         }
 
         .brand-sub {
             font-family: var(--font-mono);
-            font-size: 0.62rem;
-            letter-spacing: 1.2px;
+            font-size: 0.58rem;
+            letter-spacing: 1px;
             color: var(--text-muted);
             white-space: nowrap;
         }
 
         .sector-badge {
             font-family: var(--font-mono);
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             background: rgba(0, 242, 254, 0.1);
             color: var(--accent-cyan);
             border: 1px solid rgba(0, 242, 254, 0.35);
-            padding: 0.25rem 0.55rem;
+            padding: 0.2rem 0.48rem;
             border-radius: 3px;
             display: flex;
             align-items: center;
-            gap: 0.45rem;
+            gap: 0.38rem;
             white-space: nowrap;
         }
 
@@ -153,17 +153,17 @@
         .hunt-badge {
             position: relative;
             font-family: var(--font-mono);
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             background: rgba(245, 158, 11, 0.12);
             color: var(--accent-amber);
             border: 1px solid rgba(245, 158, 11, 0.42);
-            padding: 0.25rem 0.6rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 3px;
             display: flex;
             align-items: center;
-            gap: 0.45rem;
+            gap: 0.38rem;
             cursor: pointer;
-            max-width: 275px;
+            max-width: 265px;
             transition: background 0.2s, border-color 0.2s;
         }
 
@@ -181,13 +181,13 @@
         .hunt-popover {
             display: none;
             position: absolute;
-            top: calc(100% + 8px);
+            top: calc(100% + 6px);
             left: 0;
             width: 320px;
             background: rgba(12, 18, 25, 0.98);
             border: 1px solid var(--accent-amber);
             border-radius: 4px;
-            padding: 0.75rem;
+            padding: 0.7rem;
             box-shadow: 0 10px 28px rgba(0, 0, 0, 0.75);
             z-index: 900;
             color: var(--text-main);
@@ -203,9 +203,9 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.4rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.72rem;
+            padding-bottom: 0.35rem;
+            margin-bottom: 0.45rem;
+            font-size: 0.7rem;
             color: var(--accent-amber);
             font-weight: bold;
         }
@@ -215,9 +215,9 @@
             justify-content: space-between;
             align-items: baseline;
             gap: 0.5rem;
-            padding: 0.32rem 0;
+            padding: 0.28rem 0;
             border-bottom: 1px dashed rgba(30, 41, 59, 0.7);
-            font-size: 0.71rem;
+            font-size: 0.7rem;
         }
 
         .hunt-season-row:last-child {
@@ -232,13 +232,13 @@
         .hunt-dates {
             color: var(--accent-green);
             text-align: right;
-            font-size: 0.67rem;
+            font-size: 0.66rem;
         }
 
         .header-controls {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .loc-input-group {
@@ -248,7 +248,7 @@
             border: 1px solid var(--border-color);
             border-radius: 4px;
             overflow: hidden;
-            height: 36px;
+            height: 32px;
         }
 
         .loc-input-group input {
@@ -256,9 +256,9 @@
             border: none;
             color: var(--text-main);
             font-family: var(--font-mono);
-            font-size: 0.85rem;
-            padding: 0 0.65rem;
-            width: 175px;
+            font-size: 0.82rem;
+            padding: 0 0.55rem;
+            width: 165px;
             height: 100%;
             outline: none;
         }
@@ -269,13 +269,13 @@
             border-left: 1px solid var(--border-color);
             color: var(--accent-cyan);
             font-family: var(--font-mono);
-            font-size: 0.75rem;
-            padding: 0 0.7rem;
+            font-size: 0.72rem;
+            padding: 0 0.6rem;
             height: 100%;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.35rem;
+            gap: 0.3rem;
             transition: background 0.2s;
         }
 
@@ -285,7 +285,7 @@
 
         .header-telemetry {
             display: flex;
-            gap: 1.1rem;
+            gap: 0.85rem;
             font-family: var(--font-mono);
         }
 
@@ -296,21 +296,13 @@
         }
 
         .telemetry-label {
-            font-size: 0.62rem;
+            font-size: 0.6rem;
             color: var(--text-muted);
         }
 
         .telemetry-val {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: bold;
-        }
-
-        .intel-header-pill {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            font-family: var(--font-mono);
-            flex-shrink: 0;
         }
 
         /* Main 3-Column Tactical Layout (Desktop) */
@@ -336,27 +328,27 @@
         .panel-header {
             background-color: var(--bg-card);
             border-bottom: 1px solid var(--border-color);
-            padding: 0.6rem 0.85rem;
+            padding: 0.45rem 0.75rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-family: var(--font-mono);
-            font-size: 0.78rem;
-            letter-spacing: 0.8px;
+            font-size: 0.75rem;
+            letter-spacing: 0.7px;
             text-transform: uppercase;
-            gap: 0.5rem;
+            gap: 0.4rem;
             flex-shrink: 0;
         }
 
         .panel-header i {
             color: var(--accent-cyan);
-            margin-right: 0.3rem;
+            margin-right: 0.25rem;
         }
 
         .layer-controls-scroll {
             display: flex;
             align-items: center;
-            gap: 0.35rem;
+            gap: 0.3rem;
             overflow-x: auto;
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -368,8 +360,8 @@
 
         .filter-strip {
             display: flex;
-            gap: 0.4rem;
-            padding: 0.45rem 0.85rem;
+            gap: 0.35rem;
+            padding: 0.4rem 0.75rem;
             background-color: var(--bg-card);
             border-bottom: 1px solid var(--border-color);
             overflow-x: auto;
@@ -386,13 +378,13 @@
             border: 1px solid var(--border-color);
             color: var(--text-muted);
             font-family: var(--font-mono);
-            font-size: 0.72rem;
-            padding: 0.3rem 0.6rem;
+            font-size: 0.7rem;
+            padding: 0.22rem 0.5rem;
             border-radius: 3px;
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.2s;
-            min-height: 30px;
+            min-height: 26px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -408,7 +400,7 @@
             flex: 1;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding: 0.85rem;
+            padding: 0.75rem;
         }
 
         /* Scrollbars */
@@ -564,14 +556,14 @@
         /* Radar Playback & Layer Controls Overlay */
         .radar-hud-overlay {
             position: absolute;
-            bottom: 14px;
-            left: 12px;
-            right: 12px;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
             z-index: 500;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            gap: 0.5rem;
+            gap: 0.45rem;
             pointer-events: none;
         }
 
@@ -580,25 +572,25 @@
             border: 1px solid var(--border-color);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
-            padding: 0.55rem 0.8rem;
+            padding: 0.42rem 0.65rem;
             border-radius: 4px;
             pointer-events: auto;
             font-family: var(--font-mono);
-            font-size: 0.72rem;
+            font-size: 0.7rem;
         }
 
         .radar-timeline-controls {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.5rem;
         }
 
         .radar-play-btn {
             background: rgba(0, 242, 254, 0.15);
             border: 1px solid var(--accent-cyan);
             color: var(--accent-cyan);
-            width: 34px;
-            height: 34px;
+            width: 30px;
+            height: 30px;
             border-radius: 4px;
             cursor: pointer;
             display: flex;
@@ -612,8 +604,8 @@
         }
 
         .radar-slider {
-            width: 135px;
-            height: 24px;
+            width: 130px;
+            height: 20px;
             accent-color: var(--accent-cyan);
             cursor: pointer;
         }
@@ -621,68 +613,62 @@
         .legend-row {
             display: flex;
             align-items: center;
-            gap: 0.45rem;
-            margin-bottom: 0.22rem;
+            gap: 0.4rem;
+            margin-bottom: 0.18rem;
             color: var(--text-muted);
-            font-size: 0.68rem;
+            font-size: 0.66rem;
         }
 
         .legend-row:last-child { margin-bottom: 0; }
 
         .dot-swatch {
-            width: 9px;
-            height: 9px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             display: inline-block;
             flex-shrink: 0;
         }
 
-        /* Mobile Bottom Navigation Bar (Hidden on Desktop) */
+        /* Mobile Bottom Navigation Bar (Compact & Shrunk to Maximize Radar Height) */
         .mobile-nav {
             display: none;
             background-color: var(--bg-card);
             border-top: 1px solid var(--border-color);
-            padding-bottom: var(--safe-bottom);
+            padding: 0.18rem 0.35rem calc(0.18rem + var(--safe-bottom));
+            gap: 0.3rem;
             flex-shrink: 0;
             z-index: 700;
         }
 
         .mobile-nav-btn {
             flex: 1;
-            background: transparent;
-            border: none;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
             color: var(--text-muted);
             font-family: var(--font-mono);
-            font-size: 0.7rem;
-            padding: 0.55rem 0.25rem;
+            font-size: 0.64rem;
+            padding: 0.24rem 0.25rem;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 0.28rem;
+            gap: 0.3rem;
             cursor: pointer;
             position: relative;
-            min-height: 56px;
+            min-height: 30px;
+            line-height: 1;
+            white-space: nowrap;
         }
 
         .mobile-nav-btn i {
-            font-size: 1.05rem;
+            font-size: 0.74rem;
         }
 
         .mobile-nav-btn.active {
             color: var(--accent-cyan);
-            background: rgba(0, 242, 254, 0.08);
-        }
-
-        .mobile-nav-btn.active::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 15%;
-            right: 15%;
-            height: 2px;
-            background-color: var(--accent-cyan);
-            box-shadow: 0 0 8px var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.12);
         }
 
         /* =====================================================================
@@ -699,32 +685,53 @@
                 height: auto;
                 flex-direction: column;
                 align-items: stretch;
-                padding: 0.45rem 0.75rem;
-                gap: 0.4rem;
+                padding: 0.25rem 0.5rem;
+                gap: 0.22rem;
             }
 
-            /* Field 1: OVERWATCH 100 + ACTIVE INTEL */
+            /* Field 1: OVERWATCH 100 Title */
             .header-top-row {
                 width: 100%;
                 background: var(--bg-card);
                 border: 1px solid var(--border-color);
-                border-radius: 4px;
-                padding: 0.35rem 0.6rem;
+                border-radius: 3px;
+                padding: 0.2rem 0.45rem;
                 order: 1;
             }
 
             .brand {
                 flex: 1;
+                gap: 0.45rem;
             }
 
-            /* Field 2: LOCAL TIME directly below OVERWATCH 100 / ACTIVE INTEL */
+            .overwatch-logo {
+                width: 26px;
+                height: 26px;
+            }
+
+            .brand h1 {
+                font-size: 0.96rem;
+                letter-spacing: 1.4px;
+            }
+
+            .brand h1 .num-tag {
+                font-size: 0.68rem;
+                padding: 0.01rem 0.26rem;
+            }
+
+            .brand-sub {
+                font-size: 0.52rem;
+                letter-spacing: 0.8px;
+            }
+
+            /* Field 2: LOCAL TIME directly below OVERWATCH 100 */
             .header-telemetry {
                 width: 100%;
                 order: 2;
                 background: var(--bg-card);
                 border: 1px solid var(--border-color);
-                border-radius: 4px;
-                padding: 0.3rem 0.6rem;
+                border-radius: 3px;
+                padding: 0.16rem 0.45rem;
                 justify-content: space-between;
                 align-items: center;
             }
@@ -737,11 +744,11 @@
             }
 
             .header-telemetry .telemetry-label {
-                font-size: 0.68rem;
+                font-size: 0.62rem;
             }
 
             .header-telemetry .telemetry-val {
-                font-size: 0.85rem;
+                font-size: 0.76rem;
                 color: var(--accent-cyan);
             }
 
@@ -755,7 +762,9 @@
                 max-width: none;
                 order: 3;
                 justify-content: space-between;
-                padding: 0.35rem 0.6rem;
+                padding: 0.18rem 0.45rem;
+                font-size: 0.66rem;
+                border-radius: 3px;
             }
 
             .hunt-popover {
@@ -770,18 +779,20 @@
 
             .loc-input-group {
                 width: 100%;
-                height: 36px;
+                height: 30px;
+                border-radius: 3px;
             }
 
             .loc-input-group input {
                 flex: 1;
                 width: auto;
+                padding: 0 0.45rem;
                 font-size: 16px; /* Prevents iOS Safari auto-zoom on focus */
             }
 
             .loc-btn {
-                padding: 0 0.8rem;
-                font-size: 0.76rem;
+                padding: 0 0.6rem;
+                font-size: 0.7rem;
             }
 
             .main-grid {
@@ -802,17 +813,21 @@
                 display: flex;
             }
 
+            .center-column .panel-header {
+                padding: 0.26rem 0.45rem;
+            }
+
             .mobile-nav {
                 display: flex;
             }
 
             .radar-hud-overlay {
-                bottom: 10px;
-                left: 8px;
-                right: 8px;
+                bottom: 6px;
+                left: 6px;
+                right: 6px;
                 flex-direction: column;
                 align-items: stretch;
-                gap: 0.45rem;
+                gap: 0.3rem;
             }
 
             .legend-hud-card {
@@ -821,36 +836,49 @@
 
             .radar-timeline-controls {
                 justify-content: space-between;
-                padding: 0.45rem 0.65rem;
+                padding: 0.28rem 0.5rem;
+            }
+
+            .radar-play-btn {
+                width: 26px;
+                height: 26px;
             }
 
             .radar-slider {
                 flex: 1;
                 width: auto;
-                min-width: 90px;
+                min-width: 80px;
+                height: 18px;
             }
 
             .tab-btn {
-                min-height: 34px;
-                padding: 0.35rem 0.65rem;
+                min-height: 25px;
+                padding: 0.18rem 0.45rem;
+                font-size: 0.66rem;
             }
         }
 
         @media (max-width: 420px) {
             .brand h1 {
-                font-size: 0.98rem;
-                letter-spacing: 1.2px;
+                font-size: 0.9rem;
+                letter-spacing: 1px;
             }
             .brand h1 .num-tag {
-                font-size: 0.7rem;
-                padding: 0.02rem 0.28rem;
+                font-size: 0.64rem;
+                padding: 0.01rem 0.24rem;
             }
             .brand-sub {
-                font-size: 0.54rem;
+                font-size: 0.5rem;
             }
             .overwatch-logo {
-                width: 30px;
-                height: 30px;
+                width: 24px;
+                height: 24px;
+            }
+            .mobile-nav-btn {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.15rem;
+                gap: 0.22rem;
+                min-height: 28px;
             }
         }
     </style>
@@ -859,7 +887,7 @@
 
     <!-- Top Command Header -->
     <header>
-        <!-- Field 1: OVERWATCH 100 Title & ACTIVE INTEL -->
+        <!-- Field 1: OVERWATCH 100 Title -->
         <div class="header-top-row">
             <div class="brand">
                 <!-- Custom Tactical SVG Logo: OVERWATCH 100 -->
@@ -904,14 +932,9 @@
                     <span id="sector-label">BOURBONNAIS, IL (100 MI)</span>
                 </div>
             </div>
-
-            <div class="intel-header-pill">
-                <span class="telemetry-label">ACTIVE INTEL</span>
-                <span class="telemetry-val" id="alert-counter" style="color: var(--accent-amber);">SYNCING...</span>
-            </div>
         </div>
 
-        <!-- Field 2: LOCAL TIME (Stacked below OVERWATCH 100 / ACTIVE INTEL on Mobile) -->
+        <!-- Field 2: LOCAL TIME (Stacked directly below OVERWATCH 100 on Mobile) -->
         <div class="header-telemetry">
             <div class="telemetry-box">
                 <span class="telemetry-label">LOCAL TIME</span>
@@ -925,11 +948,11 @@
 
         <!-- Field 3: IN SEASON Active Hunting Seasons Header Field (Stacked below LOCAL TIME on Mobile) -->
         <div class="hunt-badge" id="hunt-seasons-badge" onclick="toggleHuntPopover(event)" title="Click to view active hunting seasons for current sector">
-            <div style="display:flex; align-items:center; gap:0.4rem; min-width:0;">
+            <div style="display:flex; align-items:center; gap:0.35rem; min-width:0;">
                 <i class="fa-solid fa-bullseye"></i>
                 <span class="hunt-badge-text" id="hunt-summary-text">HUNTING: SYNCING...</span>
             </div>
-            <i class="fa-solid fa-chevron-down" style="font-size: 0.62rem; flex-shrink:0;"></i>
+            <i class="fa-solid fa-chevron-down" style="font-size: 0.6rem; flex-shrink:0;"></i>
 
             <div class="hunt-popover" id="hunt-popover" onclick="event.stopPropagation()">
                 <div class="hunt-popover-header">
@@ -1000,7 +1023,7 @@
                     <button class="tab-btn active" id="btn-boundaries" onclick="toggleBoundariesOverlay()" title="Toggle State/County Borders & City Labels Above Radar">BORDERS</button>
                     <button class="tab-btn" id="btn-map-theme" onclick="toggleMapOverlayStyle()" title="Switch Unlimited Map Basemap Style">STYLE</button>
                 </div>
-                <span id="radar-frame-timestamp" style="font-size: 0.68rem; color: var(--accent-green); white-space: nowrap;">SYNCING...</span>
+                <span id="radar-frame-timestamp" style="font-size: 0.66rem; color: var(--accent-green); white-space: nowrap;">SYNCING...</span>
             </div>
 
             <div id="radar-map"></div>
@@ -1008,7 +1031,7 @@
             <!-- HUD Overlay: Radar Timeline & Legend -->
             <div class="radar-hud-overlay">
                 <div class="hud-card legend-hud-card">
-                    <div style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 0.35rem;">OVERWATCH 100 LEGEND</div>
+                    <div style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 0.3rem;">OVERWATCH 100 LEGEND</div>
                     <div class="legend-row"><span class="dot-swatch" style="border: 2px dashed #00f2fe; background: transparent;"></span> 100-Mile Perimeter Ring</div>
                     <div class="legend-row"><span class="dot-swatch" style="background: #f59e0b;"></span> NWS Weather Warning / Advisory</div>
                     <div class="legend-row"><span class="dot-swatch" style="background: #ef4444;"></span> Emergency / Seismic / Hazard</div>
@@ -1020,7 +1043,7 @@
                         <i class="fa-solid fa-pause" id="radar-play-icon"></i>
                     </button>
                     <div style="flex:1; display:flex; flex-direction:column;">
-                        <div style="font-size: 0.62rem; color: var(--text-muted); margin-bottom: 0.15rem;">DOPPLER LOOP</div>
+                        <div style="font-size: 0.6rem; color: var(--text-muted); margin-bottom: 0.1rem;">DOPPLER LOOP</div>
                         <input type="range" id="radar-slider" class="radar-slider" min="0" max="10" value="10" oninput="scrubRadarFrame(this.value)">
                     </div>
                     <button class="tab-btn" onclick="recenterRadarMap()" title="Recenter 100-Mile View">
@@ -1046,7 +1069,7 @@
 
     </div>
 
-    <!-- Mobile Bottom Tab Bar -->
+    <!-- Compact Mobile Bottom Tab Bar -->
     <nav class="mobile-nav" aria-label="Mobile Navigation">
         <button class="mobile-nav-btn active" id="m-nav-radar" onclick="switchMobileView('radar')">
             <i class="fa-solid fa-crosshairs"></i>
@@ -1550,8 +1573,11 @@
             renderRightColumn();
             plotEventMarkersOnMap();
 
-            const totalAlerts = wxEmergencyItems.length + localNewsItems.length;
-            document.getElementById('alert-counter').textContent = `${totalAlerts} ACTIVE`;
+            const alertCounterEl = document.getElementById('alert-counter');
+            if (alertCounterEl) {
+                const totalAlerts = wxEmergencyItems.length + localNewsItems.length;
+                alertCounterEl.textContent = `${totalAlerts} ACTIVE`;
+            }
         }
 
         // 5A. Open-Meteo Live Current Surface Conditions

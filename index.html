@@ -66,6 +66,14 @@
             z-index: 600;
         }
 
+        .header-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            min-width: 0;
+        }
+
         .brand {
             display: flex;
             align-items: center;
@@ -295,6 +303,14 @@
         .telemetry-val {
             font-size: 0.82rem;
             font-weight: bold;
+        }
+
+        .intel-header-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-family: var(--font-mono);
+            flex-shrink: 0;
         }
 
         /* Main 3-Column Tactical Layout (Desktop) */
@@ -548,7 +564,7 @@
         /* Radar Playback & Layer Controls Overlay */
         .radar-hud-overlay {
             position: absolute;
-            bottom: 148px;
+            bottom: 14px;
             left: 12px;
             right: 12px;
             z-index: 500;
@@ -621,40 +637,6 @@
             flex-shrink: 0;
         }
 
-        /* Bottom Live Telemetry Ticker */
-        .bottom-console {
-            height: 136px;
-            background-color: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            z-index: 10;
-            flex-shrink: 0;
-        }
-
-        .console-stream {
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 0.5rem 0.85rem;
-            font-family: var(--font-mono);
-            font-size: 0.72rem;
-            color: var(--text-muted);
-        }
-
-        .console-entry {
-            display: flex;
-            gap: 0.6rem;
-            margin-bottom: 0.25rem;
-            line-height: 1.3;
-        }
-
-        .c-time { color: var(--accent-cyan); flex-shrink: 0; }
-        .c-tag { font-weight: bold; min-width: 58px; flex-shrink: 0; }
-        .c-tag.wx { color: var(--accent-amber); }
-        .c-tag.emg { color: var(--accent-red); }
-        .c-tag.news { color: var(--accent-green); }
-
         /* Mobile Bottom Navigation Bar (Hidden on Desktop) */
         .mobile-nav {
             display: none;
@@ -715,34 +697,72 @@
         @media (max-width: 1100px) {
             header {
                 height: auto;
-                flex-wrap: wrap;
-                padding: 0.6rem 0.85rem;
-                gap: 0.5rem;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0.45rem 0.75rem;
+                gap: 0.4rem;
+            }
+
+            /* Field 1: OVERWATCH 100 + ACTIVE INTEL */
+            .header-top-row {
+                width: 100%;
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                padding: 0.35rem 0.6rem;
+                order: 1;
             }
 
             .brand {
                 flex: 1;
             }
 
+            /* Field 2: LOCAL TIME directly below OVERWATCH 100 / ACTIVE INTEL */
             .header-telemetry {
-                gap: 0.85rem;
+                width: 100%;
+                order: 2;
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                padding: 0.3rem 0.6rem;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-telemetry .telemetry-box {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .header-telemetry .telemetry-label {
+                font-size: 0.68rem;
+            }
+
+            .header-telemetry .telemetry-val {
+                font-size: 0.85rem;
+                color: var(--accent-cyan);
             }
 
             .telemetry-box:nth-child(2) {
                 display: none;
             }
 
+            /* Field 3: IN SEASON Hunting Data directly below LOCAL TIME */
             .hunt-badge {
                 width: 100%;
                 max-width: none;
                 order: 3;
                 justify-content: space-between;
+                padding: 0.35rem 0.6rem;
             }
 
             .hunt-popover {
                 width: 100%;
             }
 
+            /* Field 4: Location Search & GPS */
             .header-controls {
                 width: 100%;
                 order: 4;
@@ -750,7 +770,7 @@
 
             .loc-input-group {
                 width: 100%;
-                height: 40px;
+                height: 36px;
             }
 
             .loc-input-group input {
@@ -760,8 +780,8 @@
             }
 
             .loc-btn {
-                padding: 0 0.85rem;
-                font-size: 0.78rem;
+                padding: 0 0.8rem;
+                font-size: 0.76rem;
             }
 
             .main-grid {
@@ -787,7 +807,7 @@
             }
 
             .radar-hud-overlay {
-                bottom: 98px;
+                bottom: 10px;
                 left: 8px;
                 right: 8px;
                 flex-direction: column;
@@ -810,10 +830,6 @@
                 min-width: 90px;
             }
 
-            .bottom-console {
-                height: 90px;
-            }
-
             .tab-btn {
                 min-height: 34px;
                 padding: 0.35rem 0.65rem;
@@ -833,8 +849,8 @@
                 font-size: 0.54rem;
             }
             .overwatch-logo {
-                width: 32px;
-                height: 32px;
+                width: 30px;
+                height: 30px;
             }
         }
     </style>
@@ -843,51 +859,71 @@
 
     <!-- Top Command Header -->
     <header>
-        <div class="brand">
-            <!-- Custom Tactical SVG Logo: OVERWATCH 100 -->
-            <svg class="overwatch-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Overwatch 100 Logo">
-                <defs>
-                    <linearGradient id="owFrameGrad" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#00f2fe"/>
-                        <stop offset="100%" stop-color="#3b82f6"/>
-                    </linearGradient>
-                    <linearGradient id="owSweepGrad" x1="24" y1="24" x2="39" y2="11" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.7"/>
-                        <stop offset="100%" stop-color="#00f2fe" stop-opacity="0"/>
-                    </linearGradient>
-                </defs>
-                <!-- Tactical Corner Brackets (HUD Optics Frame) -->
-                <path d="M5 14V7H12M36 7H43V14M43 34V41H36M12 41H5V34" stroke="url(#owFrameGrad)" stroke-width="2.2" stroke-linecap="square"/>
-                <!-- Outer 100-Mile Geofence Ring -->
-                <circle cx="24" cy="24" r="14.5" fill="#09111c" stroke="#00f2fe" stroke-opacity="0.75" stroke-width="1.5" stroke-dasharray="3 2"/>
-                <!-- Inner 50-Mile Tactical Ring -->
-                <circle cx="24" cy="24" r="8" stroke="#3b82f6" stroke-opacity="0.65" stroke-width="1"/>
-                <!-- Crosshair Telemetry Axes -->
-                <line x1="24" y1="7" x2="24" y2="41" stroke="#00f2fe" stroke-opacity="0.28" stroke-width="1"/>
-                <line x1="7" y1="24" x2="41" y2="24" stroke="#00f2fe" stroke-opacity="0.28" stroke-width="1"/>
-                <!-- Rotating Doppler Sweep Beam -->
-                <g class="radar-sweep-beam">
-                    <path d="M24 24L24 9.5A14.5 14.5 0 0 1 36.5 16.8Z" fill="url(#owSweepGrad)"/>
-                    <line x1="24" y1="24" x2="24" y2="9.5" stroke="#00f2fe" stroke-width="1.8" stroke-linecap="round"/>
-                </g>
-                <!-- Center Overwatch Optic Core & Alert Nodes -->
-                <circle cx="24" cy="24" r="2.6" fill="#00f2fe"/>
-                <circle cx="31.5" cy="16.5" r="1.8" fill="#ef4444"/>
-                <circle cx="17.5" cy="30" r="1.6" fill="#f59e0b"/>
-            </svg>
+        <!-- Field 1: OVERWATCH 100 Title & ACTIVE INTEL -->
+        <div class="header-top-row">
+            <div class="brand">
+                <!-- Custom Tactical SVG Logo: OVERWATCH 100 -->
+                <svg class="overwatch-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Overwatch 100 Logo">
+                    <defs>
+                        <linearGradient id="owFrameGrad" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#00f2fe"/>
+                            <stop offset="100%" stop-color="#3b82f6"/>
+                        </linearGradient>
+                        <linearGradient id="owSweepGrad" x1="24" y1="24" x2="39" y2="11" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.7"/>
+                            <stop offset="100%" stop-color="#00f2fe" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- Tactical Corner Brackets (HUD Optics Frame) -->
+                    <path d="M5 14V7H12M36 7H43V14M43 34V41H36M12 41H5V34" stroke="url(#owFrameGrad)" stroke-width="2.2" stroke-linecap="square"/>
+                    <!-- Outer 100-Mile Geofence Ring -->
+                    <circle cx="24" cy="24" r="14.5" fill="#09111c" stroke="#00f2fe" stroke-opacity="0.75" stroke-width="1.5" stroke-dasharray="3 2"/>
+                    <!-- Inner 50-Mile Tactical Ring -->
+                    <circle cx="24" cy="24" r="8" stroke="#3b82f6" stroke-opacity="0.65" stroke-width="1"/>
+                    <!-- Crosshair Telemetry Axes -->
+                    <line x1="24" y1="7" x2="24" y2="41" stroke="#00f2fe" stroke-opacity="0.28" stroke-width="1"/>
+                    <line x1="7" y1="24" x2="41" y2="24" stroke="#00f2fe" stroke-opacity="0.28" stroke-width="1"/>
+                    <!-- Rotating Doppler Sweep Beam -->
+                    <g class="radar-sweep-beam">
+                        <path d="M24 24L24 9.5A14.5 14.5 0 0 1 36.5 16.8Z" fill="url(#owSweepGrad)"/>
+                        <line x1="24" y1="24" x2="24" y2="9.5" stroke="#00f2fe" stroke-width="1.8" stroke-linecap="round"/>
+                    </g>
+                    <!-- Center Overwatch Optic Core & Alert Nodes -->
+                    <circle cx="24" cy="24" r="2.6" fill="#00f2fe"/>
+                    <circle cx="31.5" cy="16.5" r="1.8" fill="#ef4444"/>
+                    <circle cx="17.5" cy="30" r="1.6" fill="#f59e0b"/>
+                </svg>
 
-            <div class="brand-titles">
-                <h1>OVERWATCH <span class="num-tag">100</span></h1>
-                <span class="brand-sub">REGIONAL OPS &amp; RADAR TELEMETRY</span>
+                <div class="brand-titles">
+                    <h1>OVERWATCH <span class="num-tag">100</span></h1>
+                    <span class="brand-sub">REGIONAL OPS &amp; RADAR TELEMETRY</span>
+                </div>
+
+                <div class="sector-badge" id="sector-display">
+                    <i class="fa-solid fa-crosshairs"></i>
+                    <span id="sector-label">BOURBONNAIS, IL (100 MI)</span>
+                </div>
             </div>
 
-            <div class="sector-badge" id="sector-display">
-                <i class="fa-solid fa-crosshairs"></i>
-                <span id="sector-label">BOURBONNAIS, IL (100 MI)</span>
+            <div class="intel-header-pill">
+                <span class="telemetry-label">ACTIVE INTEL</span>
+                <span class="telemetry-val" id="alert-counter" style="color: var(--accent-amber);">SYNCING...</span>
             </div>
         </div>
 
-        <!-- Active Hunting Seasons Header Field (Click to Expand Full Schedule) -->
+        <!-- Field 2: LOCAL TIME (Stacked below OVERWATCH 100 / ACTIVE INTEL on Mobile) -->
+        <div class="header-telemetry">
+            <div class="telemetry-box">
+                <span class="telemetry-label">LOCAL TIME</span>
+                <span class="telemetry-val" id="live-clock">--:--:--</span>
+            </div>
+            <div class="telemetry-box">
+                <span class="telemetry-label">PERIMETER</span>
+                <span class="telemetry-val" style="color: var(--accent-cyan);">100.0 MI / 160.9 KM</span>
+            </div>
+        </div>
+
+        <!-- Field 3: IN SEASON Active Hunting Seasons Header Field (Stacked below LOCAL TIME on Mobile) -->
         <div class="hunt-badge" id="hunt-seasons-badge" onclick="toggleHuntPopover(event)" title="Click to view active hunting seasons for current sector">
             <div style="display:flex; align-items:center; gap:0.4rem; min-width:0;">
                 <i class="fa-solid fa-bullseye"></i>
@@ -904,6 +940,7 @@
             </div>
         </div>
 
+        <!-- Field 4: Location Search & GPS -->
         <div class="header-controls">
             <div class="loc-input-group">
                 <input type="text" id="location-search" placeholder="City, State or ZIP..." value="Bourbonnais, IL" autocomplete="off">
@@ -913,21 +950,6 @@
                 <button class="loc-btn" onclick="useBrowserGPS()" title="Acquire Device GPS">
                     <i class="fa-solid fa-location-crosshairs"></i> <span>GPS</span>
                 </button>
-            </div>
-        </div>
-
-        <div class="header-telemetry">
-            <div class="telemetry-box">
-                <span class="telemetry-label">LOCAL TIME</span>
-                <span class="telemetry-val" id="live-clock">--:--:--</span>
-            </div>
-            <div class="telemetry-box">
-                <span class="telemetry-label">PERIMETER</span>
-                <span class="telemetry-val" style="color: var(--accent-cyan);">100.0 MI / 160.9 KM</span>
-            </div>
-            <div class="telemetry-box">
-                <span class="telemetry-label">ACTIVE INTEL</span>
-                <span class="telemetry-val" id="alert-counter" style="color: var(--accent-amber);">SYNCING...</span>
             </div>
         </div>
     </header>
@@ -1005,15 +1027,6 @@
                         <i class="fa-solid fa-compress-arrows-alt"></i> 100 MI
                     </button>
                 </div>
-            </div>
-
-            <!-- Bottom Live Event Console -->
-            <div class="bottom-console">
-                <div class="panel-header" style="height: 26px; font-size: 0.68rem; padding: 0 0.85rem;">
-                    <span><i class="fa-solid fa-terminal"></i> Overwatch Telemetry Log</span>
-                    <span style="color: var(--accent-green);">● LIVE</span>
-                </div>
-                <div class="console-stream" id="console-stream"></div>
             </div>
         </div>
 
@@ -1210,6 +1223,7 @@
 
         function logConsole(tagClass, tagName, message) {
             const stream = document.getElementById('console-stream');
+            if (!stream) return;
             const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false });
             const row = document.createElement('div');
             row.className = 'console-entry';

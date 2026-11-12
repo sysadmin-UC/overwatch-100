@@ -57,11 +57,11 @@
             background-color: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
             padding: 0 0.75rem;
-            height: 52px;
+            height: 54px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.45rem;
             flex-shrink: 0;
             z-index: 600;
         }
@@ -70,21 +70,21 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 0.5rem;
+            gap: 0.45rem;
             min-width: 0;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 0.55rem;
+            gap: 0.5rem;
             min-width: 0;
         }
 
         /* Custom Animated SVG Tactical Logo: OVERWATCH 100 */
         .overwatch-logo {
-            width: 34px;
-            height: 34px;
+            width: 32px;
+            height: 32px;
             flex-shrink: 0;
             filter: drop-shadow(0 0 7px rgba(0, 242, 254, 0.45));
         }
@@ -107,8 +107,8 @@
 
         .brand h1 {
             font-family: var(--font-mono);
-            font-size: 1.1rem;
-            letter-spacing: 1.8px;
+            font-size: 1.05rem;
+            letter-spacing: 1.6px;
             color: var(--accent-cyan);
             line-height: 1.08;
             white-space: nowrap;
@@ -121,31 +121,31 @@
             background: rgba(0, 242, 254, 0.16);
             border: 1px solid rgba(0, 242, 254, 0.5);
             color: #ffffff;
-            font-size: 0.74rem;
-            padding: 0.03rem 0.3rem;
+            font-size: 0.72rem;
+            padding: 0.03rem 0.28rem;
             border-radius: 2px;
             letter-spacing: 1px;
         }
 
         .brand-sub {
             font-family: var(--font-mono);
-            font-size: 0.58rem;
-            letter-spacing: 1px;
+            font-size: 0.56rem;
+            letter-spacing: 0.9px;
             color: var(--text-muted);
             white-space: nowrap;
         }
 
         .sector-badge {
             font-family: var(--font-mono);
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             background: rgba(0, 242, 254, 0.1);
             color: var(--accent-cyan);
             border: 1px solid rgba(0, 242, 254, 0.35);
-            padding: 0.2rem 0.48rem;
+            padding: 0.18rem 0.45rem;
             border-radius: 3px;
             display: flex;
             align-items: center;
-            gap: 0.38rem;
+            gap: 0.35rem;
             white-space: nowrap;
         }
 
@@ -153,17 +153,17 @@
         .hunt-badge {
             position: relative;
             font-family: var(--font-mono);
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             background: rgba(245, 158, 11, 0.12);
             color: var(--accent-amber);
             border: 1px solid rgba(245, 158, 11, 0.42);
-            padding: 0.2rem 0.5rem;
+            padding: 0.2rem 0.45rem;
             border-radius: 3px;
             display: flex;
             align-items: center;
-            gap: 0.38rem;
+            gap: 0.35rem;
             cursor: pointer;
-            max-width: 265px;
+            max-width: 225px;
             transition: background 0.2s, border-color 0.2s;
         }
 
@@ -238,7 +238,7 @@
         .header-controls {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.35rem;
         }
 
         .loc-input-group {
@@ -248,7 +248,7 @@
             border: 1px solid var(--border-color);
             border-radius: 4px;
             overflow: hidden;
-            height: 32px;
+            height: 30px;
         }
 
         .loc-input-group input {
@@ -256,9 +256,9 @@
             border: none;
             color: var(--text-main);
             font-family: var(--font-mono);
-            font-size: 0.82rem;
-            padding: 0 0.55rem;
-            width: 165px;
+            font-size: 0.8rem;
+            padding: 0 0.5rem;
+            width: 145px;
             height: 100%;
             outline: none;
         }
@@ -269,13 +269,13 @@
             border-left: 1px solid var(--border-color);
             color: var(--accent-cyan);
             font-family: var(--font-mono);
-            font-size: 0.72rem;
-            padding: 0 0.6rem;
+            font-size: 0.7rem;
+            padding: 0 0.5rem;
             height: 100%;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.25rem;
             transition: background 0.2s;
         }
 
@@ -283,11 +283,21 @@
             background: rgba(0, 242, 254, 0.28);
         }
 
+        /* Header Line 1: LOCAL TIME (Left) + TEMP & FEELS LIKE (Right) */
         .header-telemetry {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.65rem;
+            font-family: var(--font-mono);
+        }
+
+        /* Header Line 2: HUMIDITY, UV, WILDFIRE & POLLEN */
+        .header-env-strip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.65rem;
             font-family: var(--font-mono);
         }
 
@@ -295,12 +305,13 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+            white-space: nowrap;
         }
 
         .telemetry-wx-right {
             display: flex;
             align-items: center;
-            gap: 0.65rem;
+            gap: 0.6rem;
         }
 
         .telemetry-wx-right .telemetry-box {
@@ -308,12 +319,12 @@
         }
 
         .telemetry-label {
-            font-size: 0.58rem;
+            font-size: 0.56rem;
             color: var(--text-muted);
         }
 
         .telemetry-val {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: bold;
         }
 
@@ -710,19 +721,19 @@
         /* =====================================================================
            RESPONSIVE & MOBILE DEVICE OPTIMIZATIONS (TABLET & PHONE)
            ===================================================================== */
-        @media (max-width: 1360px) {
+        @media (max-width: 1460px) {
             .sector-badge {
                 display: none;
             }
         }
 
-        @media (max-width: 1100px) {
+        @media (max-width: 1150px) {
             header {
                 height: auto;
                 flex-direction: column;
                 align-items: stretch;
-                padding: 0.25rem 0.5rem;
-                gap: 0.22rem;
+                padding: 0.22rem 0.45rem;
+                gap: 0.2rem;
             }
 
             /* Field 1: OVERWATCH 100 Title */
@@ -731,7 +742,7 @@
                 background: var(--bg-card);
                 border: 1px solid var(--border-color);
                 border-radius: 3px;
-                padding: 0.2rem 0.45rem;
+                padding: 0.18rem 0.45rem;
                 order: 1;
             }
 
@@ -741,49 +752,42 @@
             }
 
             .overwatch-logo {
-                width: 26px;
-                height: 26px;
+                width: 24px;
+                height: 24px;
             }
 
             .brand h1 {
-                font-size: 0.96rem;
+                font-size: 0.94rem;
                 letter-spacing: 1.4px;
             }
 
             .brand h1 .num-tag {
-                font-size: 0.68rem;
-                padding: 0.01rem 0.26rem;
+                font-size: 0.66rem;
+                padding: 0.01rem 0.24rem;
             }
 
             .brand-sub {
-                font-size: 0.52rem;
+                font-size: 0.5rem;
                 letter-spacing: 0.8px;
             }
 
-            /* Field 2: LOCAL TIME (Left) + TEMP, HUMIDITY, UV, POLLEN (Right) */
+            /* Field 2: LOCAL TIME (Left) + TEMP & FEELS LIKE (Right) */
             .header-telemetry {
                 width: 100%;
                 order: 2;
                 background: var(--bg-card);
                 border: 1px solid var(--border-color);
                 border-radius: 3px;
-                padding: 0.18rem 0.45rem;
+                padding: 0.16rem 0.45rem;
                 justify-content: space-between;
                 align-items: center;
                 gap: 0.35rem;
-                overflow-x: auto;
-                scrollbar-width: none;
-            }
-
-            .header-telemetry::-webkit-scrollbar {
-                display: none;
             }
 
             .header-telemetry .telemetry-box {
                 flex-direction: row;
                 align-items: baseline;
-                gap: 0.24rem;
-                white-space: nowrap;
+                gap: 0.25rem;
             }
 
             .header-telemetry .telemetry-label {
@@ -796,25 +800,48 @@
             }
 
             .telemetry-wx-right {
-                gap: 0.45rem;
+                gap: 0.55rem;
             }
 
             .telemetry-wx-right .telemetry-box {
                 align-items: baseline;
             }
 
-            .perimeter-box {
-                display: none;
+            /* Field 3: Own Line Header for HUMIDITY, UV, WILDFIRE & POLLEN (Evenly Spaced) */
+            .header-env-strip {
+                width: 100%;
+                order: 3;
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: 3px;
+                padding: 0.16rem 0.45rem;
+                justify-content: space-between;
+                align-items: center;
+                gap: 0.35rem;
             }
 
-            /* Field 3: IN SEASON Hunting Data directly below LOCAL TIME */
+            .header-env-strip .telemetry-box {
+                flex-direction: row;
+                align-items: baseline;
+                gap: 0.22rem;
+            }
+
+            .header-env-strip .telemetry-label {
+                font-size: 0.55rem;
+            }
+
+            .header-env-strip .telemetry-val {
+                font-size: 0.7rem;
+            }
+
+            /* Field 4: IN SEASON Hunting Data */
             .hunt-badge {
                 width: 100%;
                 max-width: none;
-                order: 3;
+                order: 4;
                 justify-content: space-between;
-                padding: 0.18rem 0.45rem;
-                font-size: 0.66rem;
+                padding: 0.16rem 0.45rem;
+                font-size: 0.65rem;
                 border-radius: 3px;
             }
 
@@ -822,15 +849,15 @@
                 width: 100%;
             }
 
-            /* Field 4: Location Search & GPS */
+            /* Field 5: Location Search & GPS */
             .header-controls {
                 width: 100%;
-                order: 4;
+                order: 5;
             }
 
             .loc-input-group {
                 width: 100%;
-                height: 30px;
+                height: 29px;
                 border-radius: 3px;
             }
 
@@ -928,19 +955,25 @@
 
         @media (max-width: 420px) {
             .brand h1 {
-                font-size: 0.9rem;
+                font-size: 0.88rem;
                 letter-spacing: 1px;
             }
             .brand h1 .num-tag {
-                font-size: 0.64rem;
-                padding: 0.01rem 0.24rem;
+                font-size: 0.62rem;
+                padding: 0.01rem 0.22rem;
             }
             .brand-sub {
-                font-size: 0.5rem;
+                font-size: 0.48rem;
             }
             .overwatch-logo {
-                width: 24px;
-                height: 24px;
+                width: 22px;
+                height: 22px;
+            }
+            .header-env-strip .telemetry-label {
+                font-size: 0.51rem;
+            }
+            .header-env-strip .telemetry-val {
+                font-size: 0.65rem;
             }
             .layer-controls-scroll {
                 gap: 0.14rem;
@@ -1015,7 +1048,7 @@
             </div>
         </div>
 
-        <!-- Field 2: LOCAL TIME (Left) + TEMP, HUMIDITY, UV, POLLEN (Right) -->
+        <!-- Field 2: LOCAL TIME (Left) + TEMP & FEELS LIKE (Right) -->
         <div class="header-telemetry">
             <div class="telemetry-box">
                 <span class="telemetry-label">LOCAL TIME</span>
@@ -1027,25 +1060,33 @@
                     <span class="telemetry-val" id="header-wx-temp" style="color: var(--accent-cyan);">--°F</span>
                 </div>
                 <div class="telemetry-box">
-                    <span class="telemetry-label">HUMIDITY</span>
-                    <span class="telemetry-val" id="header-wx-humidity" style="color: var(--accent-green);">--%</span>
-                </div>
-                <div class="telemetry-box">
-                    <span class="telemetry-label">UV</span>
-                    <span class="telemetry-val" id="header-wx-uv" style="color: var(--accent-amber);">--</span>
-                </div>
-                <div class="telemetry-box">
-                    <span class="telemetry-label">POLLEN</span>
-                    <span class="telemetry-val" id="header-wx-pollen" style="color: #a78bfa;">--</span>
-                </div>
-                <div class="telemetry-box perimeter-box">
-                    <span class="telemetry-label">PERIMETER</span>
-                    <span class="telemetry-val" style="color: var(--accent-cyan);">100 MI</span>
+                    <span class="telemetry-label">FEELS LIKE</span>
+                    <span class="telemetry-val" id="header-wx-feels" style="color: #38bdf8;">--°F</span>
                 </div>
             </div>
         </div>
 
-        <!-- Field 3: IN SEASON Active Hunting Seasons Header Field (Stacked below LOCAL TIME on Mobile) -->
+        <!-- Field 3: Own Header Line for HUMIDITY, UV, WILDFIRE & POLLEN -->
+        <div class="header-env-strip">
+            <div class="telemetry-box">
+                <span class="telemetry-label">HUMIDITY</span>
+                <span class="telemetry-val" id="header-wx-humidity" style="color: var(--accent-green);">--%</span>
+            </div>
+            <div class="telemetry-box">
+                <span class="telemetry-label">UV</span>
+                <span class="telemetry-val" id="header-wx-uv" style="color: var(--accent-amber);">--</span>
+            </div>
+            <div class="telemetry-box">
+                <span class="telemetry-label">WILDFIRE</span>
+                <span class="telemetry-val" id="header-wx-wildfire" style="color: var(--accent-green);">LOW</span>
+            </div>
+            <div class="telemetry-box">
+                <span class="telemetry-label">POLLEN</span>
+                <span class="telemetry-val" id="header-wx-pollen" style="color: #a78bfa;">--</span>
+            </div>
+        </div>
+
+        <!-- Field 4: IN SEASON Active Hunting Seasons Header Field -->
         <div class="hunt-badge" id="hunt-seasons-badge" onclick="toggleHuntPopover(event)" title="Click to view active hunting seasons for current sector">
             <div style="display:flex; align-items:center; gap:0.35rem; min-width:0;">
                 <i class="fa-solid fa-bullseye"></i>
@@ -1062,7 +1103,7 @@
             </div>
         </div>
 
-        <!-- Field 4: Location Search & GPS -->
+        <!-- Field 5: Location Search & GPS -->
         <div class="header-controls">
             <div class="loc-input-group">
                 <input type="text" id="location-search" placeholder="City, State or ZIP..." value="Bourbonnais, IL" autocomplete="off">
@@ -1092,7 +1133,7 @@
                 <button class="tab-btn" onclick="setLeftFilter('emergency', this)">EMERGENCY</button>
             </div>
             <div class="scroll-body">
-                <!-- Live Open-Meteo Current Conditions, UV & Pollen Box -->
+                <!-- Live Open-Meteo Current Conditions, UV, Wildfire & Pollen Box -->
                 <div class="wx-summary-card" id="current-wx-box">
                     <div class="wx-top-row">
                         <div>
@@ -1107,7 +1148,7 @@
                         <div class="wx-metric"><span>PRESSURE</span><strong id="wx-pressure">-- inHg</strong></div>
                         <div class="wx-metric"><span>UV RATING</span><strong id="wx-uv" style="color: var(--accent-amber);">--</strong></div>
                         <div class="wx-metric"><span>POLLEN COUNT</span><strong id="wx-pollen" style="color: #a78bfa;">--</strong></div>
-                        <div class="wx-metric"><span>US AQI</span><strong id="wx-aqi" style="color: var(--accent-green);">--</strong></div>
+                        <div class="wx-metric"><span>WILDFIRE RISK</span><strong id="wx-wildfire" style="color: var(--accent-green);">--</strong></div>
                     </div>
                 </div>
 
@@ -1206,6 +1247,12 @@
 
         let wxEmergencyItems = [];
         let localNewsItems = [];
+        let latestSurfaceMetrics = {
+            tempF: 50,
+            humidity: 50,
+            windMph: 5,
+            gustMph: 8
+        };
 
         // Leaflet Map & Radar Animation State
         let map = null;
@@ -1663,8 +1710,10 @@
             document.getElementById('wx-coords-label').textContent =
                 `${currentSector.lat.toFixed(4)}°N, ${Math.abs(currentSector.lon).toFixed(4)}°${currentSector.lon >= 0 ? 'E' : 'W'}`;
 
+            // Fetch surface weather first so temperature, humidity & wind chill feed into wildfire & feels-like ratings
+            await fetchCurrentWeather();
+
             await Promise.all([
-                fetchCurrentWeather(),
                 fetchUvAndPollenData(),
                 fetchNWSAlerts(),
                 fetchWildfireWarnings(),
@@ -1686,6 +1735,16 @@
             }
         }
 
+        // NWS Wind Chill Index Calculation (°F & mph) + Apparent Temperature Fallback
+        function computeWindChillFeelsLike(tempF, windMph, apiApparentF) {
+            // Official NWS Wind Chill formula applies when Temp <= 50°F and Wind > 3 mph
+            if (tempF <= 50 && windMph > 3) {
+                const vPow = Math.pow(windMph, 0.16);
+                return 35.74 + (0.6215 * tempF) - (35.75 * vPow) + (0.4275 * tempF * vPow);
+            }
+            return typeof apiApparentF === 'number' ? apiApparentF : tempF;
+        }
+
         // 5A. Open-Meteo Live Current Surface Conditions
         async function fetchCurrentWeather() {
             try {
@@ -1704,13 +1763,23 @@
                     95: 'Thunderstorm', 96: 'Thunderstorm w/ Hail', 99: 'Severe Thunderstorm'
                 };
 
+                latestSurfaceMetrics = {
+                    tempF: cur.temperature_2m,
+                    humidity: cur.relative_humidity_2m,
+                    windMph: cur.wind_speed_10m,
+                    gustMph: cur.wind_gusts_10m
+                };
+
+                const feelsLikeVal = computeWindChillFeelsLike(cur.temperature_2m, cur.wind_speed_10m, cur.apparent_temperature);
                 const tempFormatted = `${Math.round(cur.temperature_2m)}°F`;
+                const feelsFormatted = `${Math.round(feelsLikeVal)}°F`;
                 const humidityFormatted = `${cur.relative_humidity_2m}%`;
 
                 document.getElementById('wx-temp').textContent = tempFormatted;
                 document.getElementById('header-wx-temp').textContent = tempFormatted;
+                document.getElementById('header-wx-feels').textContent = feelsFormatted;
                 document.getElementById('wx-condition').textContent =
-                    `${weatherCodeMap[cur.weather_code] || 'Active Conditions'} (Feels ${Math.round(cur.apparent_temperature)}°F)`;
+                    `${weatherCodeMap[cur.weather_code] || 'Active Conditions'} (Feels ${feelsFormatted})`;
                 document.getElementById('wx-wind').textContent =
                     `${Math.round(cur.wind_speed_10m)} / G${Math.round(cur.wind_gusts_10m)} mph`;
                 document.getElementById('wx-humidity').textContent = humidityFormatted;
@@ -1718,7 +1787,7 @@
                 const inHg = (cur.surface_pressure * 0.02953).toFixed(2);
                 document.getElementById('wx-pressure').textContent = `${inHg} inHg`;
 
-                logConsole('wx', 'SURFACE', `${currentSector.name}: ${tempFormatted}, Wind ${Math.round(cur.wind_speed_10m)} mph.`);
+                logConsole('wx', 'SURFACE', `${currentSector.name}: ${tempFormatted} (Feels ${feelsFormatted}), Wind ${Math.round(cur.wind_speed_10m)} mph.`);
             } catch (err) {
                 document.getElementById('wx-condition').textContent = 'Surface Sensor Unavailable';
             }
@@ -1734,7 +1803,6 @@
         }
 
         function estimateSeasonalPollen(lat, monthIdx) {
-            // Seasonal baseline when CAMS pollen grains/m3 is unavailable outside Europe
             const isWarmBelt = Math.abs(lat) < 34;
             if (monthIdx === 10 || monthIdx === 11 || monthIdx === 0) {
                 return isWarmBelt ? { level: 'LOW-MOD', dominant: 'Juniper / Cedar' } : { level: 'LOW', dominant: 'Dormant / Mold Spores' };
@@ -1767,13 +1835,6 @@
                 headerUvEl.style.color = uvCat.color;
                 cardUvEl.textContent = uvCardText;
                 cardUvEl.style.color = uvCat.color;
-
-                // US AQI
-                if (typeof cur.us_aqi === 'number') {
-                    const aqiEl = document.getElementById('wx-aqi');
-                    aqiEl.textContent = `${Math.round(cur.us_aqi)} AQI`;
-                    aqiEl.style.color = cur.us_aqi <= 50 ? 'var(--accent-green)' : cur.us_aqi <= 100 ? 'var(--accent-amber)' : 'var(--accent-red)';
-                }
 
                 // Pollen Count (Checks live CAMS grains/m3 first, falls back to regional seasonal index)
                 const pollenTypes = [
@@ -1859,6 +1920,31 @@
             }
         }
 
+        // Compute Fire Danger / Wildfire Rating from NIFC/NWS Warnings + Surface Humidity, Wind & Temperature
+        function updateWildfireRatingDisplay(activeFireCount, hasRedFlagWarning) {
+            const { tempF, humidity, windMph } = latestSurfaceMetrics;
+            let rating = { label: 'LOW', color: 'var(--accent-green)' };
+
+            if (hasRedFlagWarning || (humidity <= 20 && windMph >= 20 && tempF >= 65)) {
+                rating = { label: 'EXTREME', color: 'var(--accent-red)' };
+            } else if (activeFireCount > 0 || (humidity <= 30 && windMph >= 15 && tempF >= 55)) {
+                rating = { label: 'HIGH', color: '#f97316' };
+            } else if (humidity <= 45 && windMph >= 12 && tempF >= 45) {
+                rating = { label: 'MOD', color: 'var(--accent-amber)' };
+            }
+
+            const headerFireEl = document.getElementById('header-wx-wildfire');
+            const cardFireEl = document.getElementById('wx-wildfire');
+            if (headerFireEl) {
+                headerFireEl.textContent = rating.label;
+                headerFireEl.style.color = rating.color;
+            }
+            if (cardFireEl) {
+                cardFireEl.textContent = activeFireCount > 0 ? `${rating.label} (${activeFireCount} ACTIVE)` : rating.label;
+                cardFireEl.style.color = rating.color;
+            }
+        }
+
         // 5B-2. Wildfire Warnings & NIFC Active Perimeter Incidents Within 100 Miles
         async function fetchWildfireWarnings() {
             let wildfireCount = 0;
@@ -1930,6 +2016,8 @@
             }
 
             const hasFireWxAlert = wxEmergencyItems.some(i => i.category === 'wildfire');
+            updateWildfireRatingDisplay(wildfireCount, hasFireWxAlert);
+
             if (!hasFireWxAlert && wildfireCount === 0) {
                 wxEmergencyItems.push({
                     id: 'wildfire-nominal',
@@ -2155,7 +2243,7 @@
 
         function panToEvent(lat, lon, title) {
             if (!lat || !lon) return;
-            if (window.innerWidth <= 1100) {
+            if (window.innerWidth <= 1150) {
                 switchMobileView('radar');
             }
             setTimeout(() => {
@@ -2226,7 +2314,7 @@
                     currentSector.lon = parseFloat(data[0].lon);
                     currentSector.stateCode = extractStateAbbrev(data[0].address, data[0].display_name);
 
-                    if (window.innerWidth <= 1100) {
+                    if (window.innerWidth <= 1150) {
                         switchMobileView('radar');
                     }
                     drawSectorOverlays();
@@ -2264,7 +2352,7 @@
                     }
                 } catch (e) {}
 
-                if (window.innerWidth <= 1100) {
+                if (window.innerWidth <= 1150) {
                     switchMobileView('radar');
                 }
                 drawSectorOverlays();

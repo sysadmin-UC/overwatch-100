@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#070b10">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>OVERWATCH 100 // Tactical Regional & Weather Telemetry</title>
+    
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS & JS for Interactive 100-Mile Doppler Radar Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070b10;
+            --bg-secondary: #0c1219;
+            --bg-card: #111923;
+            --border-color: #1e293b;
+            --accent-cyan: #00f2fe;
+            --accent-blue: #3b82f6;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --font-mono: 'Share Tech Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header Bar */
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 1rem;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+            z-index: 600;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 0;
+        }
+
+        /* Custom Animated SVG Tactical Logo: OVERWATCH 100 */
+        .overwatch-logo {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 7px rgba(0, 242, 254, 0.45));
+        }
+
+        .radar-sweep-beam {
+            transform-origin: 24px 24px;
+            animation: radarSpin 3.6s linear infinite;
+        }
+
+        @keyframes radarSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .brand-titles {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .brand h1 {
+            font-family: var(--font-mono);
+            font-size: 1.15rem;
+            letter-spacing: 2px;
+            color: var(--accent-cyan);
+            line-height: 1.1;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .brand h1 .num-tag {
+            background: rgba(0, 242, 254, 0.16);
+            border: 1px solid rgba(0, 242, 254, 0.5);
+            color: #ffffff;
+            font-size: 0.78rem;
+            padding: 0.04rem 0.35rem;
+            border-radius: 2px;
+            letter-spacing: 1px;
+        }
+
+        .brand-sub {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            letter-spacing: 1.2px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .sector-badge {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            background: rgba(0, 242, 254, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 242, 254, 0.35);
+            padding: 0.25rem 0.55rem;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            white-space: nowrap;
+        }
+
+        /* Active Hunting Seasons Header Ticker/Pill */
+        .hunt-badge {
+            position: relative;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--accent-amber);
+            border: 1px solid rgba(245, 158, 11, 0.42);
+            padding: 0.25rem 0.6rem;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            cursor: pointer;
+            max-width: 275px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .hunt-badge:hover {
+            background: rgba(245, 158, 11, 0.22);
+            border-color: var(--accent-amber);
+        }
+
+        .hunt-badge-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .hunt-popover {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 320px;
+            background: rgba(12, 18, 25, 0.98);
+            border: 1px solid var(--accent-amber);
+            border-radius: 4px;
+            padding: 0.75rem;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.75);
+            z-index: 900;
+            color: var(--text-main);
+            cursor: default;
+        }
+
+        .hunt-popover.open {
+            display: block;
+        }
+
+        .hunt-popover-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.4rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.72rem;
+            color: var(--accent-amber);
+            font-weight: bold;
+        }
+
+        .hunt-season-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 0.5rem;
+            padding: 0.32rem 0;
+            border-bottom: 1px dashed rgba(30, 41, 59, 0.7);
+            font-size: 0.71rem;
+        }
+
+        .hunt-season-row:last-child {
+            border-bottom: none;
+        }
+
+        .hunt-species {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .hunt-dates {
+            color: var(--accent-green);
+            text-align: right;
+            font-size: 0.67rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .loc-input-group {
+            display: flex;
+            align-items: center;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            height: 36px;
+        }
+
+        .loc-input-group input {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            padding: 0 0.65rem;
+            width: 175px;
+            height: 100%;
+            outline: none;
+        }
+
+        .loc-btn {
+            background: rgba(0, 242, 254, 0.12);
+            border: none;
+            border-left: 1px solid var(--border-color);
+            color: var(--accent-cyan);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0 0.7rem;
+            height: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: background 0.2s;
+        }
+
+        .loc-btn:hover, .loc-btn:active {
+            background: rgba(0, 242, 254, 0.28);
+        }
+
+        .header-telemetry {
+            display: flex;
+            gap: 1.1rem;
+            font-family: var(--font-mono);
+        }
+
+        .telemetry-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .telemetry-label {
+            font-size: 0.62rem;
+            color: var(--text-muted);
+        }
+
+        .telemetry-val {
+            font-size: 0.82rem;
+            font-weight: bold;
+        }
+
+        /* Main 3-Column Tactical Layout (Desktop) */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 330px 1fr 350px;
+            grid-template-rows: 1fr;
+            gap: 1px;
+            background-color: var(--border-color);
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .panel {
+            background-color: var(--bg-secondary);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.6rem 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .panel-header i {
+            color: var(--accent-cyan);
+            margin-right: 0.3rem;
+        }
+
+        .layer-controls-scroll {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .layer-controls-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-strip {
+            display: flex;
+            gap: 0.4rem;
+            padding: 0.45rem 0.85rem;
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+            scrollbar-width: none;
+            flex-shrink: 0;
+        }
+
+        .filter-strip::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 3px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            min-height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: rgba(0, 242, 254, 0.14);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .scroll-body {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 0.85rem;
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
+        /* Current Weather Summary Strip */
+        .wx-summary-card {
+            background: linear-gradient(135deg, #132030 0%, #0d1520 100%);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .wx-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .wx-temp-main {
+            font-family: var(--font-mono);
+            font-size: 1.75rem;
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+
+        .wx-cond-text {
+            font-size: 0.82rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .wx-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.4rem;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+        }
+
+        .wx-metric span {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.64rem;
+        }
+
+        /* Feed Cards */
+        .event-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-cyan);
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin-bottom: 0.65rem;
+            transition: transform 0.15s ease, border-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .event-card:hover, .event-card:active {
+            border-color: var(--accent-cyan);
+            background-color: #162230;
+        }
+
+        .event-card.weather { border-left-color: var(--accent-amber); }
+        .event-card.emergency { border-left-color: var(--accent-red); }
+        .event-card.news { border-left-color: var(--accent-green); }
+
+        .event-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+            gap: 0.4rem;
+        }
+
+        .event-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+            line-height: 1.35;
+        }
+
+        .event-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .event-title a:hover {
+            color: var(--accent-cyan);
+            text-decoration: underline;
+        }
+
+        .event-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.38;
+        }
+
+        .severity-tag {
+            padding: 0.1rem 0.38rem;
+            border-radius: 2px;
+            font-size: 0.64rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .severity-tag.crit { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .severity-tag.warn { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
+        .severity-tag.info { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+        .severity-tag.local { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+
+        /* Center Map & Radar Stage */
+        .center-column {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+            position: relative;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        #radar-map {
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+            background-color: #060a0f;
+            z-index: 1;
+        }
+
+        /* Dark Tactical Leaflet Overrides */
+        .leaflet-container {
+            background: #060a0f !important;
+            font-family: var(--font-mono) !important;
+        }
+
+        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+            background: rgba(12, 18, 25, 0.96) !important;
+            color: var(--text-main) !important;
+            border: 1px solid var(--accent-cyan);
+            border-radius: 4px !important;
+        }
+
+        /* Radar Playback & Layer Controls Overlay */
+        .radar-hud-overlay {
+            position: absolute;
+            bottom: 148px;
+            left: 12px;
+            right: 12px;
+            z-index: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 0.5rem;
+            pointer-events: none;
+        }
+
+        .hud-card {
+            background: rgba(12, 18, 25, 0.92);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            padding: 0.55rem 0.8rem;
+            border-radius: 4px;
+            pointer-events: auto;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+        }
+
+        .radar-timeline-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .radar-play-btn {
+            background: rgba(0, 242, 254, 0.15);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            width: 34px;
+            height: 34px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .radar-play-btn:hover, .radar-play-btn:active {
+            background: rgba(0, 242, 254, 0.3);
+        }
+
+        .radar-slider {
+            width: 135px;
+            height: 24px;
+            accent-color: var(--accent-cyan);
+            cursor: pointer;
+        }
+
+        .legend-row {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-bottom: 0.22rem;
+            color: var(--text-muted);
+            font-size: 0.68rem;
+        }
+
+        .legend-row:last-child { margin-bottom: 0; }
+
+        .dot-swatch {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        /* Bottom Live Telemetry Ticker */
+        .bottom-console {
+            height: 136px;
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .console-stream {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 0.5rem 0.85rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .console-entry {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 0.25rem;
+            line-height: 1.3;
+        }
+
+        .c-time { color: var(--accent-cyan); flex-shrink: 0; }
+        .c-tag { font-weight: bold; min-width: 58px; flex-shrink: 0; }
+        .c-tag.wx { color: var(--accent-amber); }
+        .c-tag.emg { color: var(--accent-red); }
+        .c-tag.news { color: var(--accent-green); }
+
+        /* Mobile Bottom Navigation Bar (Hidden on Desktop) */
+        .mobile-nav {
+            display: none;
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding-bottom: var(--safe-bottom);
+            flex-shrink: 0;
+            z-index: 700;
+        }
+
+        .mobile-nav-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 0.55rem 0.25rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.28rem;
+            cursor: pointer;
+            position: relative;
+            min-height: 56px;
+        }
+
+        .mobile-nav-btn i {
+            font-size: 1.05rem;
+        }
+
+        .mobile-nav-btn.active {
+            color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.08);
+        }
+
+        .mobile-nav-btn.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 15%;
+            right: 15%;
+            height: 2px;
+            background-color: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-cyan);
+        }
+
+        /* =====================================================================
+           RESPONSIVE & MOBILE DEVICE OPTIMIZATIONS (TABLET & PHONE)
+           ===================================================================== */
+        @media (max-width: 1280px) {
+            .sector-badge {
+                display: none;
+            }
+        }
+
+        @media (max-width: 1100px) {
+            header {
+                height: auto;
+                flex-wrap: wrap;
+                padding: 0.6rem 0.85rem;
+                gap: 0.5rem;
+            }
+
+            .brand {
+                flex: 1;
+            }
+
+            .header-telemetry {
+                gap: 0.85rem;
+            }
+
+            .telemetry-box:nth-child(2) {
+                display: none;
+            }
+
+            .hunt-badge {
+                width: 100%;
+                max-width: none;
+                order: 3;
+                justify-content: space-between;
+            }
+
+            .hunt-popover {
+                width: 100%;
+            }
+
+            .header-controls {
+                width: 100%;
+                order: 4;
+            }
+
+            .loc-input-group {
+                width: 100%;
+                height: 40px;
+            }
+
+            .loc-input-group input {
+                flex: 1;
+                width: auto;
+                font-size: 16px; /* Prevents iOS Safari auto-zoom on focus */
+            }
+
+            .loc-btn {
+                padding: 0 0.85rem;
+                font-size: 0.78rem;
+            }
+
+            .main-grid {
+                display: block;
+                position: relative;
+                flex: 1;
+                min-height: 0;
+                background-color: var(--bg-primary);
+            }
+
+            .panel, .center-column {
+                display: none;
+                width: 100%;
+                height: 100%;
+            }
+
+            .panel.mobile-active, .center-column.mobile-active {
+                display: flex;
+            }
+
+            .mobile-nav {
+                display: flex;
+            }
+
+            .radar-hud-overlay {
+                bottom: 98px;
+                left: 8px;
+                right: 8px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.45rem;
+            }
+
+            .legend-hud-card {
+                display: none;
+            }
+
+            .radar-timeline-controls {
+                justify-content: space-between;
+                padding: 0.45rem 0.65rem;
+            }
+
+            .radar-slider {
+                flex: 1;
+                width: auto;
+                min-width: 90px;
+            }
+
+            .bottom-console {
+                height: 90px;
+            }
+
+            .tab-btn {
+                min-height: 34px;
+                padding: 0.35rem 0.65rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .brand h1 {
+                font-size: 0.98rem;
+                letter-spacing: 1.2px;
+            }
+            .brand h1 .num-tag {
+                font-size: 0.7rem;
+                padding: 0.02rem 0.28rem;
+            }
+            .brand-sub {
+                font-size: 0.54rem;
+            }
+            .overwatch-logo {
+                width: 32px;
+                height: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Command Header -->
+    <header>
+        <div class="brand">
+            <!-- Custom Tactical SVG Logo: OVERWATCH 100 -->
+            <svg class="overwatch-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Overwatch 100 Logo">
+                <defs>
+                    <linearGradient id="owFrameGrad" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#00f2fe"/>
+                        <stop offset="100%" stop-color="#3b82f6"/>
+                    </linearGradient>
+                    <linearGradient id="owSweepGrad" x1="24" y1="24" x2="39" y2="11" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.7"/>
+                        <stop offset="100%" stop-color="#00f2fe" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <!-- Tactical Corner Brackets (HUD Optics Frame) -->
+                <path d="M5 14V7H12M36 7H43V14M43 34V41H36M12 41H5V34" stroke="url(#owFrameGrad)" stroke-width="2.2" stroke-linecap="square"/>
+                <!-- Outer 100-Mile Geofence Ring -->
+                <circle cx="24" cy="24" r="14.5" fill="#09111c" stroke="#00f2fe" stroke-opacity="0.75" stroke-width="1.5" stroke-dasharray="3 2"/>
+                <!-- Inner 50-Mile Tactical Ring -->
+                <circle cx="24" cy="24" r="8" stroke="#3b82f6" stroke-opacity="0.65" stroke-width="1"/>
+                <!-- Crosshair Telemetry Axes -->
+                <line x1="24" y1="7" x2="24" y2="41" stroke="#00f2fe" stroke-opacity="0.28" stroke-width="1"/>
+                <line x1="7" y1="24" x2="41" y2="24" stroke="#00f2fe" stroke-opacity="0.28" stroke-width="1"/>
+                <!-- Rotating Doppler Sweep Beam -->
+                <g class="radar-sweep-beam">
+                    <path d="M24 24L24 9.5A14.5 14.5 0 0 1 36.5 16.8Z" fill="url(#owSweepGrad)"/>
+                    <line x1="24" y1="24" x2="24" y2="9.5" stroke="#00f2fe" stroke-width="1.8" stroke-linecap="round"/>
+                </g>
+                <!-- Center Overwatch Optic Core & Alert Nodes -->
+                <circle cx="24" cy="24" r="2.6" fill="#00f2fe"/>
+                <circle cx="31.5" cy="16.5" r="1.8" fill="#ef4444"/>
+                <circle cx="17.5" cy="30" r="1.6" fill="#f59e0b"/>
+            </svg>
+
+            <div class="brand-titles">
+                <h1>OVERWATCH <span class="num-tag">100</span></h1>
+                <span class="brand-sub">REGIONAL OPS &amp; RADAR TELEMETRY</span>
+            </div>
+
+            <div class="sector-badge" id="sector-display">
+                <i class="fa-solid fa-crosshairs"></i>
+                <span id="sector-label">BOURBONNAIS, IL (100 MI)</span>
+            </div>
+        </div>
+
+        <!-- Active Hunting Seasons Header Field (Click to Expand Full Schedule) -->
+        <div class="hunt-badge" id="hunt-seasons-badge" onclick="toggleHuntPopover(event)" title="Click to view active hunting seasons for current sector">
+            <div style="display:flex; align-items:center; gap:0.4rem; min-width:0;">
+                <i class="fa-solid fa-bullseye"></i>
+                <span class="hunt-badge-text" id="hunt-summary-text">HUNTING: SYNCING...</span>
+            </div>
+            <i class="fa-solid fa-chevron-down" style="font-size: 0.62rem; flex-shrink:0;"></i>
+
+            <div class="hunt-popover" id="hunt-popover" onclick="event.stopPropagation()">
+                <div class="hunt-popover-header">
+                    <span id="hunt-popover-title">ACTIVE HUNTING SEASONS</span>
+                    <span id="hunt-popover-date" style="color: var(--text-muted); font-weight: normal;"></span>
+                </div>
+                <div id="hunt-seasons-list"></div>
+            </div>
+        </div>
+
+        <div class="header-controls">
+            <div class="loc-input-group">
+                <input type="text" id="location-search" placeholder="City, State or ZIP..." value="Bourbonnais, IL" autocomplete="off">
+                <button class="loc-btn" onclick="searchNewLocation()" title="Set 100-Mile Perimeter Center">
+                    <i class="fa-solid fa-magnifying-glass-location"></i> <span>SET</span>
+                </button>
+                <button class="loc-btn" onclick="useBrowserGPS()" title="Acquire Device GPS">
+                    <i class="fa-solid fa-location-crosshairs"></i> <span>GPS</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="header-telemetry">
+            <div class="telemetry-box">
+                <span class="telemetry-label">LOCAL TIME</span>
+                <span class="telemetry-val" id="live-clock">--:--:--</span>
+            </div>
+            <div class="telemetry-box">
+                <span class="telemetry-label">PERIMETER</span>
+                <span class="telemetry-val" style="color: var(--accent-cyan);">100.0 MI / 160.9 KM</span>
+            </div>
+            <div class="telemetry-box">
+                <span class="telemetry-label">ACTIVE INTEL</span>
+                <span class="telemetry-val" id="alert-counter" style="color: var(--accent-amber);">SYNCING...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main 3-Column Dashboard (Switches cleanly via Mobile Tabs on smaller screens) -->
+    <div class="main-grid">
+
+        <!-- Left Column: Local Weather & Regional Emergency Alerts -->
+        <div class="panel" id="panel-weather">
+            <div class="panel-header">
+                <span><i class="fa-solid fa-cloud-bolt"></i> Weather &amp; Emergency</span>
+                <span id="nws-station-tag" style="font-size: 0.68rem; color: var(--accent-amber);">NWS / USGS</span>
+            </div>
+            <div class="filter-strip" id="left-tabs">
+                <button class="tab-btn active" onclick="setLeftFilter('all', this)">ALL</button>
+                <button class="tab-btn" onclick="setLeftFilter('weather', this)">NWS ALERTS</button>
+                <button class="tab-btn" onclick="setLeftFilter('emergency', this)">EMERGENCY</button>
+            </div>
+            <div class="scroll-body">
+                <!-- Live Open-Meteo Current Conditions Box -->
+                <div class="wx-summary-card" id="current-wx-box">
+                    <div class="wx-top-row">
+                        <div>
+                            <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted);" id="wx-coords-label">41.1550°N, 87.8789°W</div>
+                            <div class="wx-cond-text" id="wx-condition">Acquiring Surface Telemetry...</div>
+                        </div>
+                        <div class="wx-temp-main" id="wx-temp">--°F</div>
+                    </div>
+                    <div class="wx-metrics-grid">
+                        <div class="wx-metric"><span>WIND / GUST</span><strong id="wx-wind">-- mph</strong></div>
+                        <div class="wx-metric"><span>HUMIDITY</span><strong id="wx-humidity">--%</strong></div>
+                        <div class="wx-metric"><span>PRESSURE</span><strong id="wx-pressure">-- inHg</strong></div>
+                    </div>
+                </div>
+
+                <!-- Dynamic NWS Alerts & Regional Emergency Feed -->
+                <div id="wx-emergency-feed"></div>
+            </div>
+        </div>
+
+        <!-- Center Stage: 100-Mile Radius Live Doppler Radar & Tactical Map -->
+        <div class="center-column mobile-active" id="panel-radar">
+            <div class="panel-header">
+                <div class="layer-controls-scroll">
+                    <button class="tab-btn active" id="btn-nexrad-live" onclick="toggleUnlimitedNexrad()" title="Toggle Free Unlimited NOAA/IEM Real-Time NEXRAD Radar">NEXRAD</button>
+                    <button class="tab-btn active" id="btn-nws-poly" onclick="toggleNwsPolygons()" title="Toggle Free Unlimited NWS Warning Polygons">ZONES</button>
+                    <button class="tab-btn" id="btn-goes-ir" onclick="toggleGoesSatellite()" title="Toggle Free Unlimited GOES Infrared Satellite">GOES IR</button>
+                    <button class="tab-btn active" id="btn-boundaries" onclick="toggleBoundariesOverlay()" title="Toggle State/County Borders & City Labels Above Radar">BORDERS</button>
+                    <button class="tab-btn" id="btn-map-theme" onclick="toggleMapOverlayStyle()" title="Switch Unlimited Map Basemap Style">STYLE</button>
+                </div>
+                <span id="radar-frame-timestamp" style="font-size: 0.68rem; color: var(--accent-green); white-space: nowrap;">SYNCING...</span>
+            </div>
+
+            <div id="radar-map"></div>
+
+            <!-- HUD Overlay: Radar Timeline & Legend -->
+            <div class="radar-hud-overlay">
+                <div class="hud-card legend-hud-card">
+                    <div style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 0.35rem;">OVERWATCH 100 LEGEND</div>
+                    <div class="legend-row"><span class="dot-swatch" style="border: 2px dashed #00f2fe; background: transparent;"></span> 100-Mile Perimeter Ring</div>
+                    <div class="legend-row"><span class="dot-swatch" style="background: #f59e0b;"></span> NWS Weather Warning / Advisory</div>
+                    <div class="legend-row"><span class="dot-swatch" style="background: #ef4444;"></span> Emergency / Seismic / Hazard</div>
+                    <div class="legend-row"><span class="dot-swatch" style="background: #10b981;"></span> Local News / Community Intel</div>
+                </div>
+
+                <div class="hud-card radar-timeline-controls">
+                    <button class="radar-play-btn" id="radar-play-btn" onclick="toggleRadarPlayback()" title="Play/Pause Radar Loop">
+                        <i class="fa-solid fa-pause" id="radar-play-icon"></i>
+                    </button>
+                    <div style="flex:1; display:flex; flex-direction:column;">
+                        <div style="font-size: 0.62rem; color: var(--text-muted); margin-bottom: 0.15rem;">DOPPLER LOOP</div>
+                        <input type="range" id="radar-slider" class="radar-slider" min="0" max="10" value="10" oninput="scrubRadarFrame(this.value)">
+                    </div>
+                    <button class="tab-btn" onclick="recenterRadarMap()" title="Recenter 100-Mile View">
+                        <i class="fa-solid fa-compress-arrows-alt"></i> 100 MI
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom Live Event Console -->
+            <div class="bottom-console">
+                <div class="panel-header" style="height: 26px; font-size: 0.68rem; padding: 0 0.85rem;">
+                    <span><i class="fa-solid fa-terminal"></i> Overwatch Telemetry Log</span>
+                    <span style="color: var(--accent-green);">● LIVE</span>
+                </div>
+                <div class="console-stream" id="console-stream"></div>
+            </div>
+        </div>
+
+        <!-- Right Column: Local News & Community Events Feed -->
+        <div class="panel" id="panel-news">
+            <div class="panel-header">
+                <span><i class="fa-solid fa-newspaper"></i> Local News &amp; Events</span>
+                <span style="font-size: 0.66rem; color: var(--accent-green);">NEWEST FIRST</span>
+            </div>
+            <div class="filter-strip" id="right-tabs">
+                <button class="tab-btn active" onclick="setRightFilter('all', this)">ALL</button>
+                <button class="tab-btn" onclick="setRightFilter('dispatch', this)">NEWS DISPATCHES</button>
+                <button class="tab-btn" onclick="setRightFilter('civic', this)">LOCAL SITES</button>
+            </div>
+            <div class="scroll-body" id="news-feed"></div>
+        </div>
+
+    </div>
+
+    <!-- Mobile Bottom Tab Bar -->
+    <nav class="mobile-nav" aria-label="Mobile Navigation">
+        <button class="mobile-nav-btn active" id="m-nav-radar" onclick="switchMobileView('radar')">
+            <i class="fa-solid fa-crosshairs"></i>
+            <span>OVERWATCH</span>
+        </button>
+        <button class="mobile-nav-btn" id="m-nav-weather" onclick="switchMobileView('weather')">
+            <i class="fa-solid fa-cloud-bolt"></i>
+            <span>WX &amp; ALERTS</span>
+        </button>
+        <button class="mobile-nav-btn" id="m-nav-news" onclick="switchMobileView('news')">
+            <i class="fa-solid fa-newspaper"></i>
+            <span>NEWS &amp; EVENTS</span>
+        </button>
+    </nav>
+
+    <script>
+        // =========================================================================
+        // 1. STATE & SECTOR CONFIGURATION (Default: Bourbonnais, IL 60914)
+        // =========================================================================
+        let currentSector = {
+            name: 'Bourbonnais, IL',
+            stateCode: 'IL',
+            lat: 41.1550,
+            lon: -87.8789,
+            radiusMiles: 100
+        };
+
+        let leftFilter = 'all';
+        let rightFilter = 'all';
+
+        let wxEmergencyItems = [];
+        let localNewsItems = [];
+
+        // Leaflet Map & Radar Animation State
+        let map = null;
+        let centerMarker = null;
+        let radiusCircle100 = null;
+        let radiusCircle50 = null;
+        let eventMarkersLayer = null;
+
+        // Unlimited Free Map Basemaps & NOAA/IEM Real-Time Weather Overlays
+        let darkBasemapLayer = null;
+        let osmStreetBasemapLayer = null;
+        let boundariesAndLabelsLayer = null;
+        let usingDarkBasemap = true;
+        let iemNexradLiveLayer = null;
+        let iemNwsWarningsLayer = null;
+        let iemGoesIrLayer = null;
+
+        let radarHost = 'https://tilecache.rainviewer.com';
+        let radarFrames = [];
+        let radarLayers = {};
+        let currentFrameIndex = 0;
+        let radarPlaying = true;
+        let radarTimer = null;
+
+        // =========================================================================
+        // 2. ACTIVE HUNTING SEASONS ENGINE (IDNR 2026-2027 & GENERAL US SEASONS)
+        // =========================================================================
+        const HUNTING_SCHEDULES = {
+            IL: [
+                { species: 'Archery Deer (Statewide)', ranges: [['2026-10-01', '2026-11-19'], ['2026-11-23', '2026-12-02'], ['2026-12-07', '2027-01-17']], note: 'Closed during Firearm Deer' },
+                { species: 'Firearm Deer (1st & 2nd)', ranges: [['2026-11-20', '2026-11-22'], ['2026-12-03', '2026-12-06']], note: 'Shotgun / Muzzleloader' },
+                { species: 'Muzzleloader Deer', ranges: [['2026-12-11', '2026-12-13']], note: 'Muzzleloader Only' },
+                { species: 'Late Winter / CWD Deer', ranges: [['2026-12-31', '2027-01-03'], ['2027-01-15', '2027-01-17']], note: 'Select Counties' },
+                { species: 'Fall Archery Turkey', ranges: [['2026-10-01', '2027-01-17']], note: 'Closed during Firearm Deer' },
+                { species: 'Pheasant, Quail & Partridge', ranges: [['2026-11-07', '2027-01-08']], note: 'North Zone (to Jan 15 South)' },
+                { species: 'Cottontail Rabbit', ranges: [['2026-11-07', '2027-02-15']], note: 'Statewide' },
+                { species: 'Squirrel (Fox & Gray)', ranges: [['2026-08-01', '2027-02-15']], note: 'Closed Nov 20-22 & Dec 3-6' },
+                { species: 'Ducks & Mergansers (North)', ranges: [['2026-10-31', '2026-12-27']], note: 'North Zone (Bourbonnais/Kankakee)' },
+                { species: 'Canada & Light Geese (North)', ranges: [['2026-10-31', '2027-01-26']], note: 'North Zone' },
+                { species: 'Wilson’s Snipe & Rail', ranges: [['2026-09-05', '2026-12-20']], note: 'Rail ends Nov 13' },
+                { species: 'Raccoon, Opossum, Fox, Bobcat', ranges: [['2026-11-10', '2027-02-15']], note: 'Closed during Firearm Deer' },
+                { species: 'Coyote & Striped Skunk', ranges: [['2026-01-01', '2026-11-19'], ['2026-11-23', '2026-12-02'], ['2026-12-07', '2027-12-31']], note: 'Year-round (closed Firearm Deer)' }
+            ],
+            DEFAULT: [
+                { species: 'Archery Whitetail Deer', ranges: [['2026-10-01', '2027-01-15']], note: 'Fall/Winter Bow' },
+                { species: 'Firearm / Rifle Deer', ranges: [['2026-11-14', '2026-12-06']], note: 'Regional Gun Season' },
+                { species: 'Upland Game (Pheasant/Rabbit)', ranges: [['2026-11-01', '2027-01-31']], note: 'Small Game' },
+                { species: 'Migratory Waterfowl (Duck/Goose)', ranges: [['2026-10-24', '2027-01-25']], note: 'Flyway Season' },
+                { species: 'Furbearer & Predator', ranges: [['2026-11-10', '2027-02-15']], note: 'State Regulations Apply' }
+            ]
+        };
+
+        function updateActiveHuntingSeasons() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const todayStr = `${yyyy}-${mm}-${dd}`;
+
+            const st = (currentSector.stateCode || 'IL').toUpperCase();
+            const schedule = HUNTING_SCHEDULES[st] || HUNTING_SCHEDULES.DEFAULT;
+            const regionLabel = HUNTING_SCHEDULES[st] ? `${st} DNR` : `${st} REGIONAL`;
+
+            const activeSeasons = schedule.filter(item =>
+                item.ranges.some(([start, end]) => todayStr >= start && todayStr <= end)
+            );
+
+            const summaryEl = document.getElementById('hunt-summary-text');
+            const titleEl = document.getElementById('hunt-popover-title');
+            const dateEl = document.getElementById('hunt-popover-date');
+            const listEl = document.getElementById('hunt-seasons-list');
+
+            titleEl.textContent = `ACTIVE SEASONS (${regionLabel})`;
+            dateEl.textContent = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+            if (activeSeasons.length > 0) {
+                const topNames = activeSeasons.slice(0, 2).map(s => s.species.split('(')[0].trim()).join(', ');
+                const extraCount = activeSeasons.length > 2 ? ` +${activeSeasons.length - 2}` : '';
+                summaryEl.textContent = `IN SEASON (${activeSeasons.length}): ${topNames}${extraCount}`;
+
+                listEl.innerHTML = activeSeasons.map(s => {
+                    const activeRange = s.ranges.find(([start, end]) => todayStr >= start && todayStr <= end);
+                    const fmtRange = activeRange ? `${formatShortDate(activeRange[0])} – ${formatShortDate(activeRange[1])}` : '';
+                    return `
+                        <div class="hunt-season-row">
+                            <div>
+                                <div class="hunt-species">${escapeHtml(s.species)}</div>
+                                <div style="font-size:0.62rem; color:var(--text-muted);">${escapeHtml(s.note)}</div>
+                            </div>
+                            <div class="hunt-dates">${escapeHtml(fmtRange)}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                summaryEl.textContent = `HUNTING (${regionLabel}): NO MAJOR SEASONS OPEN`;
+                listEl.innerHTML = `<div style="font-size:0.72rem; color:var(--text-muted); padding:0.35rem 0;">No primary big-game or waterfowl seasons active on this date.</div>`;
+            }
+        }
+
+        function formatShortDate(isoStr) {
+            const [y, m, d] = isoStr.split('-').map(Number);
+            const dt = new Date(y, m - 1, d);
+            return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function toggleHuntPopover(e) {
+            e.stopPropagation();
+            document.getElementById('hunt-popover').classList.toggle('open');
+        }
+
+        document.addEventListener('click', () => {
+            const pop = document.getElementById('hunt-popover');
+            if (pop) pop.classList.remove('open');
+        });
+
+        // =========================================================================
+        // 3. MOBILE VIEW SWITCHER & CLOCK / TELEMETRY
+        // =========================================================================
+        function switchMobileView(viewName) {
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`m-nav-${viewName}`).classList.add('active');
+
+            document.getElementById('panel-radar').classList.remove('mobile-active');
+            document.getElementById('panel-weather').classList.remove('mobile-active');
+            document.getElementById('panel-news').classList.remove('mobile-active');
+
+            document.getElementById(`panel-${viewName}`).classList.add('mobile-active');
+
+            if (viewName === 'radar' && map) {
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 60);
+            }
+        }
+
+        function updateLiveClock() {
+            const now = new Date();
+            document.getElementById('live-clock').textContent = now.toLocaleTimeString('en-US', { hour12: false });
+        }
+        setInterval(updateLiveClock, 1000);
+        updateLiveClock();
+
+        function logConsole(tagClass, tagName, message) {
+            const stream = document.getElementById('console-stream');
+            const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false });
+            const row = document.createElement('div');
+            row.className = 'console-entry';
+            row.innerHTML = `<span class="c-time">[${timeStr}]</span><span class="c-tag ${tagClass}">${tagName}</span><span>${escapeHtml(message)}</span>`;
+            stream.prepend(row);
+            if (stream.children.length > 40) {
+                stream.removeChild(stream.lastChild);
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Haversine Distance Calculator (Miles)
+        function calculateDistanceMiles(lat1, lon1, lat2, lon2) {
+            const R = 3958.8; // Earth radius in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+        }
+
+        // =========================================================================
+        // 4. INITIALIZE LEAFLET MAP WITH 100-MILE RADIUS & RAINVIEWER DOPPLER RADAR
+        // =========================================================================
+        function initMap() {
+            map = L.map('radar-map', {
+                center: [currentSector.lat, currentSector.lon],
+                zoom: 7,
+                zoomControl: true,
+                tap: true
+            });
+
+            // Reliable Dark Basemap (Works on both http://localhost and file:// without Referer blocks)
+            darkBasemapLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '&copy; Esri, HERE, Garmin | Radar: NOAA/IEM & RainViewer',
+                maxZoom: 16
+            }).addTo(map);
+
+            // Reliable Street/Topographic Basemap
+            osmStreetBasemapLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '&copy; Esri, HERE, Garmin | Radar: NOAA/IEM & RainViewer',
+                maxZoom: 18
+            });
+
+            // Crisp State/County Boundaries & City Labels Overlay (Rendered ABOVE Radar at zIndex 300)
+            boundariesAndLabelsLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '&copy; Esri',
+                maxZoom: 16,
+                zIndex: 300
+            }).addTo(map);
+
+            // Free, Unlimited Real-Time NOAA NEXRAD Base Reflectivity WMS (Iowa Environmental Mesonet)
+            iemNexradLiveLayer = L.tileLayer.wms('https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi?', {
+                layers: 'nexrad-n0q-900913',
+                format: 'image/png',
+                transparent: true,
+                opacity: 0.72,
+                zIndex: 210,
+                attribution: 'Live NEXRAD &copy; NOAA / IEM'
+            }).addTo(map);
+
+            // Free, Unlimited Real-Time NWS Watch/Warning Polygons WMS
+            iemNwsWarningsLayer = L.tileLayer.wms('https://mesonet.agron.iastate.edu/cgi-bin/wms/us/wwa.cgi?', {
+                layers: 'warnings_c',
+                format: 'image/png',
+                transparent: true,
+                opacity: 0.60,
+                zIndex: 220,
+                attribution: 'NWS Zones &copy; NOAA / IEM'
+            }).addTo(map);
+
+            // Free, Unlimited Real-Time GOES Infrared Cloud Satellite WMS
+            iemGoesIrLayer = L.tileLayer.wms('https://mesonet.agron.iastate.edu/cgi-bin/wms/goes_east.cgi?', {
+                layers: 'conus_ir',
+                format: 'image/png',
+                transparent: true,
+                opacity: 0.50,
+                zIndex: 190,
+                attribution: 'GOES IR &copy; NOAA / IEM'
+            });
+
+            eventMarkersLayer = L.layerGroup().addTo(map);
+            drawSectorOverlays();
+            loadRainViewerRadar();
+            logConsole('wx', 'SYS', 'OVERWATCH 100 initialized: NEXRAD, state/county borders & NWS zones active.');
+        }
+
+        function toggleUnlimitedNexrad() {
+            const btn = document.getElementById('btn-nexrad-live');
+            if (map.hasLayer(iemNexradLiveLayer)) {
+                map.removeLayer(iemNexradLiveLayer);
+                btn.classList.remove('active');
+            } else {
+                iemNexradLiveLayer.setParams({ _ts: Date.now() });
+                iemNexradLiveLayer.addTo(map);
+                btn.classList.add('active');
+            }
+        }
+
+        function toggleNwsPolygons() {
+            const btn = document.getElementById('btn-nws-poly');
+            if (map.hasLayer(iemNwsWarningsLayer)) {
+                map.removeLayer(iemNwsWarningsLayer);
+                btn.classList.remove('active');
+            } else {
+                iemNwsWarningsLayer.setParams({ _ts: Date.now() });
+                iemNwsWarningsLayer.addTo(map);
+                btn.classList.add('active');
+            }
+        }
+
+        function toggleGoesSatellite() {
+            const btn = document.getElementById('btn-goes-ir');
+            if (map.hasLayer(iemGoesIrLayer)) {
+                map.removeLayer(iemGoesIrLayer);
+                btn.classList.remove('active');
+            } else {
+                iemGoesIrLayer.setParams({ _ts: Date.now() });
+                iemGoesIrLayer.addTo(map);
+                btn.classList.add('active');
+            }
+        }
+
+        function toggleBoundariesOverlay() {
+            const btn = document.getElementById('btn-boundaries');
+            if (map.hasLayer(boundariesAndLabelsLayer)) {
+                map.removeLayer(boundariesAndLabelsLayer);
+                btn.classList.remove('active');
+            } else {
+                boundariesAndLabelsLayer.addTo(map);
+                btn.classList.add('active');
+            }
+        }
+
+        function toggleMapOverlayStyle() {
+            if (usingDarkBasemap) {
+                map.removeLayer(darkBasemapLayer);
+                osmStreetBasemapLayer.addTo(map);
+            } else {
+                map.removeLayer(osmStreetBasemapLayer);
+                darkBasemapLayer.addTo(map);
+            }
+            usingDarkBasemap = !usingDarkBasemap;
+        }
+
+        function refreshUnlimitedWmsOverlays() {
+            const ts = Date.now();
+            if (iemNexradLiveLayer && map.hasLayer(iemNexradLiveLayer)) {
+                iemNexradLiveLayer.setParams({ _ts: ts });
+            }
+            if (iemNwsWarningsLayer && map.hasLayer(iemNwsWarningsLayer)) {
+                iemNwsWarningsLayer.setParams({ _ts: ts });
+            }
+            if (iemGoesIrLayer && map.hasLayer(iemGoesIrLayer)) {
+                iemGoesIrLayer.setParams({ _ts: ts });
+            }
+        }
+
+        function drawSectorOverlays() {
+            if (centerMarker) map.removeLayer(centerMarker);
+            if (radiusCircle100) map.removeLayer(radiusCircle100);
+            if (radiusCircle50) map.removeLayer(radiusCircle50);
+
+            const meters100Miles = 100 * 1609.344; // 160,934.4 meters
+            const meters50Miles = 50 * 1609.344;
+
+            // 100-Mile Outer Perimeter Ring
+            radiusCircle100 = L.circle([currentSector.lat, currentSector.lon], {
+                radius: meters100Miles,
+                color: '#00f2fe',
+                weight: 1.5,
+                dashArray: '6, 6',
+                fillColor: '#00f2fe',
+                fillOpacity: 0.03
+            }).addTo(map);
+
+            // 50-Mile Inner Range Ring
+            radiusCircle50 = L.circle([currentSector.lat, currentSector.lon], {
+                radius: meters50Miles,
+                color: '#3b82f6',
+                weight: 1,
+                dashArray: '3, 6',
+                fillOpacity: 0
+            }).addTo(map);
+
+            // Center Crosshair Marker
+            const centerIcon = L.divIcon({
+                className: 'custom-center-pin',
+                html: `<div style="width:14px;height:14px;border-radius:50%;background:#00f2fe;border:2px solid #070b10;box-shadow:0 0 12px #00f2fe;"></div>`,
+                iconSize: [14, 14],
+                iconAnchor: [7, 7]
+            });
+
+            centerMarker = L.marker([currentSector.lat, currentSector.lon], { icon: centerIcon })
+                .addTo(map)
+                .bindPopup(`<strong>OVERWATCH 100 CENTER</strong><br>${escapeHtml(currentSector.name)}<br>100-Mile Perimeter Active`);
+
+            map.fitBounds(radiusCircle100.getBounds(), { padding: [18, 18] });
+        }
+
+        function recenterRadarMap() {
+            if (radiusCircle100) {
+                map.fitBounds(radiusCircle100.getBounds(), { padding: [18, 18] });
+            }
+        }
+
+        // Fetch Live RainViewer Weather Radar Frames
+        async function loadRainViewerRadar() {
+            try {
+                const res = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+                const data = await res.json();
+
+                Object.values(radarLayers).forEach(layer => map.removeLayer(layer));
+                radarLayers = {};
+
+                radarHost = data.host || 'https://tilecache.rainviewer.com';
+                const past = data.radar?.past || [];
+                const nowcast = data.radar?.nowcast || [];
+                radarFrames = [...past, ...nowcast];
+
+                if (radarFrames.length > 0) {
+                    const slider = document.getElementById('radar-slider');
+                    slider.max = radarFrames.length - 1;
+                    currentFrameIndex = past.length > 0 ? past.length - 1 : radarFrames.length - 1;
+                    slider.value = currentFrameIndex;
+
+                    showRadarFrame(currentFrameIndex);
+                    startRadarLoop();
+                    logConsole('wx', 'RADAR', `Doppler loop synced (${radarFrames.length} frames loaded).`);
+                }
+            } catch (err) {
+                document.getElementById('radar-frame-timestamp').textContent = 'NEXRAD LIVE';
+                logConsole('wx', 'RADAR', 'RainViewer loop delayed; NOAA/IEM NEXRAD live radar active.');
+            }
+        }
+
+        function showRadarFrame(index) {
+            if (!radarFrames[index]) return;
+            const frame = radarFrames[index];
+
+            Object.keys(radarLayers).forEach(key => {
+                if (Number(key) !== index && map.hasLayer(radarLayers[key])) {
+                    radarLayers[key].setOpacity(0);
+                }
+            });
+
+            if (!radarLayers[index]) {
+                const tileUrl = `${radarHost}${frame.path}/256/{z}/{x}/{y}/6/1_1.png`;
+                radarLayers[index] = L.tileLayer(tileUrl, {
+                    opacity: 0.72,
+                    maxNativeZoom: 7,
+                    maxZoom: 18,
+                    zIndex: 200
+                }).addTo(map);
+            } else {
+                radarLayers[index].setOpacity(0.72);
+            }
+
+            const frameDate = new Date(frame.time * 1000);
+            const isForecast = frame.time * 1000 > Date.now();
+            const labelType = isForecast ? 'FCST' : 'OBS';
+            document.getElementById('radar-frame-timestamp').textContent =
+                `${labelType}: ${frameDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            document.getElementById('radar-slider').value = index;
+        }
+
+        function startRadarLoop() {
+            if (radarTimer) clearInterval(radarTimer);
+            radarTimer = setInterval(() => {
+                if (!radarPlaying || radarFrames.length === 0) return;
+                currentFrameIndex = (currentFrameIndex + 1) % radarFrames.length;
+                showRadarFrame(currentFrameIndex);
+            }, 900);
+        }
+
+        function toggleRadarPlayback() {
+            radarPlaying = !radarPlaying;
+            const icon = document.getElementById('radar-play-icon');
+            icon.className = radarPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+        }
+
+        function scrubRadarFrame(val) {
+            radarPlaying = false;
+            document.getElementById('radar-play-icon').className = 'fa-solid fa-play';
+            currentFrameIndex = Number(val);
+            showRadarFrame(currentFrameIndex);
+        }
+
+        // =========================================================================
+        // 5. FETCH LIVE DATA: WEATHER, NWS ALERTS, EMERGENCY & LOCAL NEWS
+        // =========================================================================
+        async function refreshAllSectorData() {
+            wxEmergencyItems = [];
+            localNewsItems = [];
+            eventMarkersLayer.clearLayers();
+
+            updateActiveHuntingSeasons();
+
+            document.getElementById('sector-label').textContent = `${currentSector.name.toUpperCase()} (100 MI)`;
+            document.getElementById('wx-coords-label').textContent =
+                `${currentSector.lat.toFixed(4)}°N, ${Math.abs(currentSector.lon).toFixed(4)}°${currentSector.lon >= 0 ? 'E' : 'W'}`;
+
+            await Promise.all([
+                fetchCurrentWeather(),
+                fetchNWSAlerts(),
+                fetchRegionalEmergencies(),
+                fetchLocalNewsAndEvents()
+            ]);
+
+            // Sort Local News & Events strictly by most recent timestamp descending
+            localNewsItems.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+            renderLeftColumn();
+            renderRightColumn();
+            plotEventMarkersOnMap();
+
+            const totalAlerts = wxEmergencyItems.length + localNewsItems.length;
+            document.getElementById('alert-counter').textContent = `${totalAlerts} ACTIVE`;
+        }
+
+        // 5A. Open-Meteo Live Current Surface Conditions
+        async function fetchCurrentWeather() {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${currentSector.lat}&longitude=${currentSector.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m,surface_pressure&temperature_unit=fahrenheit&wind_speed_unit=mph`;
+                const res = await fetch(url);
+                const data = await res.json();
+                const cur = data.current;
+
+                const weatherCodeMap = {
+                    0: 'Clear Sky', 1: 'Mainly Clear', 2: 'Partly Cloudy', 3: 'Overcast',
+                    45: 'Fog', 48: 'Depositing Rime Fog',
+                    51: 'Light Drizzle', 53: 'Moderate Drizzle', 55: 'Dense Drizzle',
+                    61: 'Slight Rain', 63: 'Moderate Rain', 65: 'Heavy Rain',
+                    71: 'Slight Snowfall', 73: 'Moderate Snowfall', 75: 'Heavy Snowfall',
+                    80: 'Rain Showers', 81: 'Moderate Showers', 82: 'Violent Showers',
+                    95: 'Thunderstorm', 96: 'Thunderstorm w/ Hail', 99: 'Severe Thunderstorm'
+                };
+
+                document.getElementById('wx-temp').textContent = `${Math.round(cur.temperature_2m)}°F`;
+                document.getElementById('wx-condition').textContent =
+                    `${weatherCodeMap[cur.weather_code] || 'Active Conditions'} (Feels ${Math.round(cur.apparent_temperature)}°F)`;
+                document.getElementById('wx-wind').textContent =
+                    `${Math.round(cur.wind_speed_10m)} / G${Math.round(cur.wind_gusts_10m)} mph`;
+                document.getElementById('wx-humidity').textContent = `${cur.relative_humidity_2m}%`;
+                const inHg = (cur.surface_pressure * 0.02953).toFixed(2);
+                document.getElementById('wx-pressure').textContent = `${inHg} inHg`;
+
+                logConsole('wx', 'SURFACE', `${currentSector.name}: ${Math.round(cur.temperature_2m)}°F, Wind ${Math.round(cur.wind_speed_10m)} mph.`);
+            } catch (err) {
+                document.getElementById('wx-condition').textContent = 'Surface Sensor Unavailable';
+            }
+        }
+
+        // 5B. National Weather Service (NWS) Active Alerts
+        async function fetchNWSAlerts() {
+            try {
+                const res = await fetch(`https://api.weather.gov/alerts/active?point=${currentSector.lat.toFixed(4)},${currentSector.lon.toFixed(4)}`, {
+                    headers: { 'User-Agent': 'Overwatch100Dashboard/1.0' }
+                });
+                const data = await res.json();
+
+                if (data.features && data.features.length > 0) {
+                    data.features.forEach((feat, idx) => {
+                        const p = feat.properties;
+                        wxEmergencyItems.push({
+                            id: `nws-${idx}`,
+                            category: 'weather',
+                            source: `NWS // ${p.senderName || 'NOAA'}`,
+                            severity: p.severity === 'Extreme' || p.severity === 'Severe' ? 'crit' : 'warn',
+                            severityLabel: (p.severity || 'ADVISORY').toUpperCase(),
+                            title: p.event || 'Weather Advisory',
+                            desc: p.headline || (p.description ? p.description.slice(0, 160) + '...' : ''),
+                            lat: currentSector.lat + (Math.random() - 0.5) * 0.25,
+                            lon: currentSector.lon + (Math.random() - 0.5) * 0.25,
+                            distance: 'In Sector'
+                        });
+                    });
+                    logConsole('wx', 'NWS', `Loaded ${data.features.length} active NWS alert(s) for sector.`);
+                } else {
+                    wxEmergencyItems.push({
+                        id: 'nws-clear',
+                        category: 'weather',
+                        source: 'NWS // REGIONAL WATCH',
+                        severity: 'info',
+                        severityLabel: 'NOMINAL',
+                        title: `No Active Severe Weather Warnings in Immediate Point`,
+                        desc: `Monitoring 100-mile Doppler perimeter around ${currentSector.name}. Radar loop active.`,
+                        lat: currentSector.lat,
+                        lon: currentSector.lon,
+                        distance: '0 mi'
+                    });
+                }
+            } catch (err) {
+                logConsole('wx', 'NWS', 'NWS Alert endpoint delayed; Doppler radar active.');
+            }
+        }
+
+        // 5C. Regional Emergency Events (USGS Seismic within 100 Miles + NASA EONET)
+        async function fetchRegionalEmergencies() {
+            try {
+                const [usgsRes, eonetRes] = await Promise.all([
+                    fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${currentSector.lat}&longitude=${currentSector.lon}&maxradiuskm=161&limit=5`).then(r => r.ok ? r.json() : null).catch(() => null),
+                    fetch(`https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=25`).then(r => r.ok ? r.json() : null).catch(() => null)
+                ]);
+
+                let foundCount = 0;
+
+                if (usgsRes && usgsRes.features) {
+                    usgsRes.features.forEach((eq, idx) => {
+                        const [lon, lat, depth] = eq.geometry.coordinates;
+                        const dist = calculateDistanceMiles(currentSector.lat, currentSector.lon, lat, lon).toFixed(1);
+                        wxEmergencyItems.push({
+                            id: `usgs-${idx}`,
+                            category: 'emergency',
+                            source: 'USGS // SEISMIC SENSOR',
+                            severity: eq.properties.mag >= 4.0 ? 'crit' : 'warn',
+                            severityLabel: `M${eq.properties.mag.toFixed(1)}`,
+                            title: eq.properties.title,
+                            desc: `Recorded ${dist} miles from sector center at depth of ${depth.toFixed(1)} km.`,
+                            lat,
+                            lon,
+                            distance: `${dist} mi`
+                        });
+                        foundCount++;
+                    });
+                }
+
+                if (eonetRes && eonetRes.events) {
+                    eonetRes.events.forEach((ev, idx) => {
+                        const geom = ev.geometry?.[ev.geometry.length - 1];
+                        if (geom && Array.isArray(geom.coordinates) && typeof geom.coordinates[0] === 'number') {
+                            const [lon, lat] = geom.coordinates;
+                            const dist = calculateDistanceMiles(currentSector.lat, currentSector.lon, lat, lon);
+                            if (dist <= 100) {
+                                wxEmergencyItems.push({
+                                    id: `eonet-${idx}`,
+                                    category: 'emergency',
+                                    source: `NASA EONET // ${ev.categories?.[0]?.title || 'HAZARD'}`,
+                                    severity: 'crit',
+                                    severityLabel: 'ACTIVE HAZARD',
+                                    title: ev.title,
+                                    desc: `Active environmental/emergency event detected ${dist.toFixed(1)} miles from center.`,
+                                    lat,
+                                    lon,
+                                    distance: `${dist.toFixed(1)} mi`
+                                });
+                                foundCount++;
+                            }
+                        }
+                    });
+                }
+
+                if (foundCount === 0) {
+                    wxEmergencyItems.push({
+                        id: 'emg-nominal',
+                        category: 'emergency',
+                        source: 'USGS & NASA EONET // 100-MI SCAN',
+                        severity: 'local',
+                        severityLabel: 'ALL CLEAR',
+                        title: '0 Seismic or Wildfire Emergencies Within 100 Miles',
+                        desc: `Automated 100-mile radius scan around ${currentSector.name} reports normal geological and environmental status.`,
+                        lat: currentSector.lat,
+                        lon: currentSector.lon,
+                        distance: '0 mi'
+                    });
+                } else {
+                    logConsole('emg', 'EMERG', `Detected ${foundCount} emergency/seismic event(s) inside 100-mile radius.`);
+                }
+            } catch (err) {
+                logConsole('emg', 'EMERG', 'Regional emergency sensor poll completed.');
+            }
+        }
+
+        // 5D. Local News & Community Events (Sorted by Most Recent)
+        async function fetchLocalNewsAndEvents() {
+            const cityQuery = currentSector.name;
+            const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(cityQuery + ' news OR events')}&hl=en-US&gl=US&ceid=US:en`;
+
+            try {
+                const [newsRes, geoWikiRes] = await Promise.all([
+                    fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`).then(r => r.ok ? r.json() : null).catch(() => null),
+                    fetch(`https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${currentSector.lat}|${currentSector.lon}&gsradius=10000&gslimit=8&format=json&origin=*`).then(r => r.ok ? r.json() : null).catch(() => null)
+                ]);
+
+                if (newsRes && newsRes.status === 'ok' && Array.isArray(newsRes.items)) {
+                    const sortedNews = newsRes.items
+                        .slice()
+                        .sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0))
+                        .slice(0, 12);
+
+                    sortedNews.forEach((item, idx) => {
+                        const parsedTs = item.pubDate ? Date.parse(item.pubDate) || 0 : 0;
+                        const dateObj = parsedTs ? new Date(parsedTs) : null;
+                        const pubLabel = dateObj
+                            ? `${dateObj.toLocaleDateString([], { month: 'short', day: 'numeric' })} ${dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                            : 'Recent';
+
+                        const angle = (idx * 30) * (Math.PI / 180);
+                        const distDeg = 0.08 + (idx % 3) * 0.06;
+                        localNewsItems.push({
+                            id: `news-${idx}`,
+                            category: 'dispatch',
+                            timestamp: parsedTs,
+                            source: `LOCAL NEWS // ${pubLabel}`,
+                            severity: 'local',
+                            severityLabel: 'LOCAL',
+                            title: item.title,
+                            desc: `Regional news & community dispatch for ${currentSector.name}. Tap headline to open source.`,
+                            url: item.link,
+                            lat: currentSector.lat + Math.sin(angle) * distDeg,
+                            lon: currentSector.lon + Math.cos(angle) * distDeg
+                        });
+                    });
+                    logConsole('news', 'INTEL', `Synced ${sortedNews.length} local news & event dispatches (newest first).`);
+                }
+
+                if (geoWikiRes && geoWikiRes.query?.geosearch) {
+                    geoWikiRes.query.geosearch.slice(0, 5).forEach((place, idx) => {
+                        const distMi = (place.dist / 1609.344).toFixed(1);
+                        localNewsItems.push({
+                            id: `civic-${idx}`,
+                            category: 'civic',
+                            timestamp: 0,
+                            source: `CIVIC / VENUE // ${distMi} MI`,
+                            severity: 'info',
+                            severityLabel: 'LOCAL SITE',
+                            title: `${place.title} — Local Area Point of Interest`,
+                            desc: `Located ${distMi} miles from sector center (${place.lat.toFixed(4)}, ${place.lon.toFixed(4)}).`,
+                            url: `https://en.wikipedia.org/?curid=${place.pageid}`,
+                            lat: place.lat,
+                            lon: place.lon
+                        });
+                    });
+                }
+            } catch (err) {
+                logConsole('news', 'INTEL', 'Local news RSS gateway returned partial results.');
+            }
+        }
+
+        // =========================================================================
+        // 6. RENDER FEEDS & MAP PINS
+        // =========================================================================
+        function renderLeftColumn() {
+            const container = document.getElementById('wx-emergency-feed');
+            const filtered = wxEmergencyItems.filter(item => leftFilter === 'all' || item.category === leftFilter);
+
+            container.innerHTML = filtered.map(item => `
+                <div class="event-card ${item.category}" onclick="panToEvent(${item.lat}, ${item.lon}, '${escapeHtml(item.title)}')">
+                    <div class="event-meta">
+                        <span>${escapeHtml(item.source)}</span>
+                        <span class="severity-tag ${item.severity}">${escapeHtml(item.severityLabel)}</span>
+                    </div>
+                    <div class="event-title">${escapeHtml(item.title)}</div>
+                    <div class="event-desc">${escapeHtml(item.desc)}</div>
+                </div>
+            `).join('') || '<div style="color:var(--text-muted);font-size:0.78rem;">No events match current filter.</div>';
+        }
+
+        function renderRightColumn() {
+            const container = document.getElementById('news-feed');
+            const filtered = localNewsItems
+                .filter(item => rightFilter === 'all' || item.category === rightFilter)
+                .slice()
+                .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+            container.innerHTML = filtered.map(item => `
+                <div class="event-card news" onclick="${item.lat ? `panToEvent(${item.lat}, ${item.lon}, '${escapeHtml(item.title)}')` : ''}">
+                    <div class="event-meta">
+                        <span>${escapeHtml(item.source)}</span>
+                        <span class="severity-tag ${item.severity}">${escapeHtml(item.severityLabel)}</span>
+                    </div>
+                    <div class="event-title">
+                        ${item.url ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escapeHtml(item.title)} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.65rem;"></i></a>` : escapeHtml(item.title)}
+                    </div>
+                    <div class="event-desc">${escapeHtml(item.desc)}</div>
+                </div>
+            `).join('') || '<div style="color:var(--text-muted);font-size:0.78rem;">No items match current filter.</div>';
+        }
+
+        function plotEventMarkersOnMap() {
+            eventMarkersLayer.clearLayers();
+            const allGeoEvents = [...wxEmergencyItems, ...localNewsItems].filter(e => e.lat && e.lon);
+
+            allGeoEvents.forEach(ev => {
+                let color = '#10b981'; // local news & civic sites
+                if (ev.category === 'weather') color = '#f59e0b';
+                if (ev.category === 'emergency') color = '#ef4444';
+
+                const pinIcon = L.divIcon({
+                    className: 'sector-event-pin',
+                    html: `<div style="width:12px;height:12px;border-radius:50%;background:${color};border:2px solid #070b10;box-shadow:0 0 8px ${color};"></div>`,
+                    iconSize: [12, 12],
+                    iconAnchor: [6, 6]
+                });
+
+                L.marker([ev.lat, ev.lon], { icon: pinIcon })
+                    .addTo(eventMarkersLayer)
+                    .bindPopup(`<strong>${escapeHtml(ev.source)}</strong><br>${escapeHtml(ev.title)}`);
+            });
+        }
+
+        function panToEvent(lat, lon, title) {
+            if (!lat || !lon) return;
+            if (window.innerWidth <= 1100) {
+                switchMobileView('radar');
+            }
+            setTimeout(() => {
+                map.setView([lat, lon], 10, { animate: true });
+            }, 80);
+            logConsole('wx', 'FOCUS', `Centered Overwatch 100 on: ${title}`);
+        }
+
+        function setLeftFilter(type, btn) {
+            leftFilter = type;
+            document.querySelectorAll('#left-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderLeftColumn();
+        }
+
+        function setRightFilter(type, btn) {
+            rightFilter = type;
+            document.querySelectorAll('#right-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderRightColumn();
+        }
+
+        // =========================================================================
+        // 7. LOCATION SEARCH & BROWSER GPS GEOLOCATION
+        // =========================================================================
+        const US_STATES_MAP = {
+            'alabama': 'AL', 'alaska': 'AK', 'arizona': 'AZ', 'arkansas': 'AR', 'california': 'CA',
+            'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE', 'florida': 'FL', 'georgia': 'GA',
+            'hawaii': 'HI', 'idaho': 'ID', 'illinois': 'IL', 'indiana': 'IN', 'iowa': 'IA',
+            'kansas': 'KS', 'kentucky': 'KY', 'louisiana': 'LA', 'maine': 'ME', 'maryland': 'MD',
+            'massachusetts': 'MA', 'michigan': 'MI', 'minnesota': 'MN', 'mississippi': 'MS', 'missouri': 'MO',
+            'montana': 'MT', 'nebraska': 'NE', 'nevada': 'NV', 'new hampshire': 'NH', 'new jersey': 'NJ',
+            'new mexico': 'NM', 'new york': 'NY', 'north carolina': 'NC', 'north dakota': 'ND', 'ohio': 'OH',
+            'oklahoma': 'OK', 'oregon': 'OR', 'pennsylvania': 'PA', 'rhode island': 'RI', 'south carolina': 'SC',
+            'south dakota': 'SD', 'tennessee': 'TN', 'texas': 'TX', 'utah': 'UT', 'vermont': 'VT',
+            'virginia': 'VA', 'washington': 'WA', 'west virginia': 'WV', 'wisconsin': 'WI', 'wyoming': 'WY'
+        };
+
+        function extractStateAbbrev(addressObj, fallbackText) {
+            if (addressObj && addressObj['ISO3166-2-lvl4']) {
+                const parts = addressObj['ISO3166-2-lvl4'].split('-');
+                if (parts[1]) return parts[1].toUpperCase();
+            }
+            if (addressObj && addressObj.state) {
+                const lower = addressObj.state.toLowerCase();
+                if (US_STATES_MAP[lower]) return US_STATES_MAP[lower];
+            }
+            if (fallbackText) {
+                const match = fallbackText.match(/\b([A-Z]{2})\b/);
+                if (match) return match[1];
+            }
+            return 'IL';
+        }
+
+        async function searchNewLocation() {
+            const inputEl = document.getElementById('location-search');
+            const query = inputEl.value.trim();
+            if (!query) return;
+
+            inputEl.blur();
+            logConsole('wx', 'GEO', `Geocoding target sector: "${query}"...`);
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&addressdetails=1&format=json&limit=1`);
+                const data = await res.json();
+                if (data && data[0]) {
+                    currentSector.name = data[0].display_name.split(',').slice(0, 2).join(',').trim();
+                    currentSector.lat = parseFloat(data[0].lat);
+                    currentSector.lon = parseFloat(data[0].lon);
+                    currentSector.stateCode = extractStateAbbrev(data[0].address, data[0].display_name);
+
+                    if (window.innerWidth <= 1100) {
+                        switchMobileView('radar');
+                    }
+                    drawSectorOverlays();
+                    await refreshAllSectorData();
+                } else {
+                    alert('Location not found. Try a City, State or ZIP code.');
+                }
+            } catch (err) {
+                logConsole('wx', 'GEO', 'Geocoding request failed.');
+            }
+        }
+
+        function useBrowserGPS() {
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser.');
+                return;
+            }
+            logConsole('wx', 'GPS', 'Acquiring device GPS coordinates...');
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                currentSector.lat = pos.coords.latitude;
+                currentSector.lon = pos.coords.longitude;
+                currentSector.name = `GPS (${currentSector.lat.toFixed(2)}, ${currentSector.lon.toFixed(2)})`;
+
+                try {
+                    const revRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${currentSector.lat}&lon=${currentSector.lon}&format=json`);
+                    const revData = await revRes.json();
+                    if (revData && revData.address) {
+                        const city = revData.address.city || revData.address.town || revData.address.village || revData.address.county;
+                        const state = revData.address.state;
+                        currentSector.stateCode = extractStateAbbrev(revData.address, revData.display_name);
+                        if (city && state) {
+                            currentSector.name = `${city}, ${state}`;
+                            document.getElementById('location-search').value = currentSector.name;
+                        }
+                    }
+                } catch (e) {}
+
+                if (window.innerWidth <= 1100) {
+                    switchMobileView('radar');
+                }
+                drawSectorOverlays();
+                await refreshAllSectorData();
+            }, () => {
+                alert('Unable to retrieve GPS coordinates. Check device location permissions.');
+            });
+        }
+
+        document.getElementById('location-search').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchNewLocation();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (map) map.invalidateSize();
+        });
+
+        // Boot Dashboard
+        window.onload = async () => {
+            initMap();
+            await refreshAllSectorData();
+            setInterval(() => {
+                loadRainViewerRadar();
+                refreshUnlimitedWmsOverlays();
+                refreshAllSectorData();
+            }, 300000);
+        };
+    </script>
+</body>
+</html>

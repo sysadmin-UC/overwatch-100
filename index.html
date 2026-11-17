@@ -56,14 +56,66 @@
         header {
             background-color: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
-            padding: 0 1rem;
-            height: 60px;
+            padding: 0.45rem 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            flex-shrink: 0;
+            z-index: 600;
+        }
+
+        .header-row-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 0.75rem;
-            flex-shrink: 0;
-            z-index: 600;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .header-row-wx {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            background: rgba(17, 25, 35, 0.92);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 4px;
+            padding: 0.3rem 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            width: 100%;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .header-row-wx::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hdr-wx-item {
+            display: flex;
+            align-items: center;
+            gap: 0.32rem;
+            white-space: nowrap;
+        }
+
+        .hdr-wx-lbl {
+            color: var(--text-muted);
+            font-size: 0.65rem;
+        }
+
+        .hdr-wx-val {
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+
+        .header-row-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            width: 100%;
         }
 
         .brand {
@@ -548,7 +600,7 @@
         /* Radar Playback & Layer Controls Overlay */
         .radar-hud-overlay {
             position: absolute;
-            bottom: 148px;
+            bottom: 14px;
             left: 12px;
             right: 12px;
             z-index: 500;
@@ -621,40 +673,6 @@
             flex-shrink: 0;
         }
 
-        /* Bottom Live Telemetry Ticker */
-        .bottom-console {
-            height: 136px;
-            background-color: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            z-index: 10;
-            flex-shrink: 0;
-        }
-
-        .console-stream {
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 0.5rem 0.85rem;
-            font-family: var(--font-mono);
-            font-size: 0.72rem;
-            color: var(--text-muted);
-        }
-
-        .console-entry {
-            display: flex;
-            gap: 0.6rem;
-            margin-bottom: 0.25rem;
-            line-height: 1.3;
-        }
-
-        .c-time { color: var(--accent-cyan); flex-shrink: 0; }
-        .c-tag { font-weight: bold; min-width: 58px; flex-shrink: 0; }
-        .c-tag.wx { color: var(--accent-amber); }
-        .c-tag.emg { color: var(--accent-red); }
-        .c-tag.news { color: var(--accent-green); }
-
         /* Mobile Bottom Navigation Bar (Hidden on Desktop) */
         .mobile-nav {
             display: none;
@@ -714,28 +732,26 @@
 
         @media (max-width: 1100px) {
             header {
-                height: auto;
-                flex-wrap: wrap;
-                padding: 0.6rem 0.85rem;
-                gap: 0.5rem;
+                padding: 0.45rem 0.65rem;
+                gap: 0.35rem;
             }
 
-            .brand {
-                flex: 1;
+            .header-row-wx {
+                justify-content: space-evenly;
+                padding: 0.25rem 0.4rem;
+                font-size: 0.7rem;
+                gap: 0.4rem;
             }
 
-            .header-telemetry {
-                gap: 0.85rem;
-            }
-
-            .telemetry-box:nth-child(2) {
-                display: none;
+            .header-row-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.35rem;
             }
 
             .hunt-badge {
                 width: 100%;
                 max-width: none;
-                order: 3;
                 justify-content: space-between;
             }
 
@@ -745,12 +761,11 @@
 
             .header-controls {
                 width: 100%;
-                order: 4;
             }
 
             .loc-input-group {
                 width: 100%;
-                height: 40px;
+                height: 36px;
             }
 
             .loc-input-group input {
@@ -760,8 +775,8 @@
             }
 
             .loc-btn {
-                padding: 0 0.85rem;
-                font-size: 0.78rem;
+                padding: 0 0.75rem;
+                font-size: 0.75rem;
             }
 
             .main-grid {
@@ -787,12 +802,12 @@
             }
 
             .radar-hud-overlay {
-                bottom: 98px;
+                bottom: 10px;
                 left: 8px;
                 right: 8px;
                 flex-direction: column;
                 align-items: stretch;
-                gap: 0.45rem;
+                gap: 0.4rem;
             }
 
             .legend-hud-card {
@@ -801,7 +816,7 @@
 
             .radar-timeline-controls {
                 justify-content: space-between;
-                padding: 0.45rem 0.65rem;
+                padding: 0.4rem 0.6rem;
             }
 
             .radar-slider {
@@ -810,13 +825,9 @@
                 min-width: 90px;
             }
 
-            .bottom-console {
-                height: 90px;
-            }
-
             .tab-btn {
-                min-height: 34px;
-                padding: 0.35rem 0.65rem;
+                min-height: 32px;
+                padding: 0.3rem 0.55rem;
             }
         }
 
@@ -843,91 +854,106 @@
 
     <!-- Top Command Header -->
     <header>
-        <div class="brand">
-            <!-- Custom Tactical SVG Logo: OVERWATCH 100 -->
-            <svg class="overwatch-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Overwatch 100 Logo">
-                <defs>
-                    <linearGradient id="owFrameGrad" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#00f2fe"/>
-                        <stop offset="100%" stop-color="#3b82f6"/>
-                    </linearGradient>
-                    <linearGradient id="owSweepGrad" x1="24" y1="24" x2="39" y2="11" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.7"/>
-                        <stop offset="100%" stop-color="#00f2fe" stop-opacity="0"/>
-                    </linearGradient>
-                </defs>
-                <!-- Tactical Corner Brackets (HUD Optics Frame) -->
-                <path d="M5 14V7H12M36 7H43V14M43 34V41H36M12 41H5V34" stroke="url(#owFrameGrad)" stroke-width="2.2" stroke-linecap="square"/>
-                <!-- Outer 100-Mile Geofence Ring -->
-                <circle cx="24" cy="24" r="14.5" fill="#09111c" stroke="#00f2fe" stroke-opacity="0.75" stroke-width="1.5" stroke-dasharray="3 2"/>
-                <!-- Inner 50-Mile Tactical Ring -->
-                <circle cx="24" cy="24" r="8" stroke="#3b82f6" stroke-opacity="0.65" stroke-width="1"/>
-                <!-- Crosshair Telemetry Axes -->
-                <line x1="24" y1="7" x2="24" y2="41" stroke="#00f2fe" stroke-opacity="0.28" stroke-width="1"/>
-                <line x1="7" y1="24" x2="41" y2="24" stroke="#00f2fe" stroke-opacity="0.28" stroke-width="1"/>
-                <!-- Rotating Doppler Sweep Beam -->
-                <g class="radar-sweep-beam">
-                    <path d="M24 24L24 9.5A14.5 14.5 0 0 1 36.5 16.8Z" fill="url(#owSweepGrad)"/>
-                    <line x1="24" y1="24" x2="24" y2="9.5" stroke="#00f2fe" stroke-width="1.8" stroke-linecap="round"/>
-                </g>
-                <!-- Center Overwatch Optic Core & Alert Nodes -->
-                <circle cx="24" cy="24" r="2.6" fill="#00f2fe"/>
-                <circle cx="31.5" cy="16.5" r="1.8" fill="#ef4444"/>
-                <circle cx="17.5" cy="30" r="1.6" fill="#f59e0b"/>
-            </svg>
+        <!-- Line 1: Title & Current Time -->
+        <div class="header-row-top">
+            <div class="brand">
+                <!-- Custom Tactical SVG Logo: OVERWATCH 100 -->
+                <svg class="overwatch-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Overwatch 100 Logo">
+                    <defs>
+                        <linearGradient id="owFrameGrad" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#00f2fe"/>
+                            <stop offset="100%" stop-color="#3b82f6"/>
+                        </linearGradient>
+                        <linearGradient id="owSweepGrad" x1="24" y1="24" x2="39" y2="11" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.7"/>
+                            <stop offset="100%" stop-color="#00f2fe" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M5 14V7H12M36 7H43V14M43 34V41H36M12 41H5V34" stroke="url(#owFrameGrad)" stroke-width="2.2" stroke-linecap="square"/>
+                    <circle cx="24" cy="24" r="14.5" fill="#09111c" stroke="#00f2fe" stroke-opacity="0.75" stroke-width="1.5" stroke-dasharray="3 2"/>
+                    <circle cx="24" cy="24" r="8" stroke="#3b82f6" stroke-opacity="0.65" stroke-width="1"/>
+                    <line x1="24" y1="7" x2="24" y2="41" stroke="#00f2fe" stroke-opacity="0.28" stroke-width="1"/>
+                    <line x1="7" y1="24" x2="41" y2="24" stroke="#00f2fe" stroke-opacity="0.28" stroke-width="1"/>
+                    <g class="radar-sweep-beam">
+                        <path d="M24 24L24 9.5A14.5 14.5 0 0 1 36.5 16.8Z" fill="url(#owSweepGrad)"/>
+                        <line x1="24" y1="24" x2="24" y2="9.5" stroke="#00f2fe" stroke-width="1.8" stroke-linecap="round"/>
+                    </g>
+                    <circle cx="24" cy="24" r="2.6" fill="#00f2fe"/>
+                    <circle cx="31.5" cy="16.5" r="1.8" fill="#ef4444"/>
+                    <circle cx="17.5" cy="30" r="1.6" fill="#f59e0b"/>
+                </svg>
 
-            <div class="brand-titles">
-                <h1>OVERWATCH <span class="num-tag">100</span></h1>
-                <span class="brand-sub">REGIONAL OPS &amp; RADAR TELEMETRY</span>
-            </div>
-
-            <div class="sector-badge" id="sector-display">
-                <i class="fa-solid fa-crosshairs"></i>
-                <span id="sector-label">BOURBONNAIS, IL (100 MI)</span>
-            </div>
-        </div>
-
-        <!-- Active Hunting Seasons Header Field (Click to Expand Full Schedule) -->
-        <div class="hunt-badge" id="hunt-seasons-badge" onclick="toggleHuntPopover(event)" title="Click to view active hunting seasons for current sector">
-            <div style="display:flex; align-items:center; gap:0.4rem; min-width:0;">
-                <i class="fa-solid fa-bullseye"></i>
-                <span class="hunt-badge-text" id="hunt-summary-text">HUNTING: SYNCING...</span>
-            </div>
-            <i class="fa-solid fa-chevron-down" style="font-size: 0.62rem; flex-shrink:0;"></i>
-
-            <div class="hunt-popover" id="hunt-popover" onclick="event.stopPropagation()">
-                <div class="hunt-popover-header">
-                    <span id="hunt-popover-title">ACTIVE HUNTING SEASONS</span>
-                    <span id="hunt-popover-date" style="color: var(--text-muted); font-weight: normal;"></span>
+                <div class="brand-titles">
+                    <h1>OVERWATCH <span class="num-tag">100</span></h1>
+                    <span class="brand-sub">REGIONAL OPS &amp; RADAR TELEMETRY</span>
                 </div>
-                <div id="hunt-seasons-list"></div>
+
+                <div class="sector-badge" id="sector-display">
+                    <i class="fa-solid fa-crosshairs"></i>
+                    <span id="sector-label">BOURBONNAIS, IL (100 MI)</span>
+                </div>
+            </div>
+
+            <div class="header-telemetry">
+                <div class="telemetry-box">
+                    <span class="telemetry-label">LOCAL TIME</span>
+                    <span class="telemetry-val" id="live-clock">--:--:--</span>
+                </div>
             </div>
         </div>
 
-        <div class="header-controls">
-            <div class="loc-input-group">
-                <input type="text" id="location-search" placeholder="City, State or ZIP..." value="Bourbonnais, IL" autocomplete="off">
-                <button class="loc-btn" onclick="searchNewLocation()" title="Set 100-Mile Perimeter Center">
-                    <i class="fa-solid fa-magnifying-glass-location"></i> <span>SET</span>
-                </button>
-                <button class="loc-btn" onclick="useBrowserGPS()" title="Acquire Device GPS">
-                    <i class="fa-solid fa-location-crosshairs"></i> <span>GPS</span>
-                </button>
+        <!-- Line 2: Current Temp, Feels Like, Wind / Gust, Humidity, and Pressure -->
+        <div class="header-row-wx" aria-label="Current Weather Telemetry">
+            <div class="hdr-wx-item">
+                <span class="hdr-wx-lbl">TEMP:</span>
+                <span class="hdr-wx-val" id="hdr-wx-temp">--°F</span>
+            </div>
+            <div class="hdr-wx-item">
+                <span class="hdr-wx-lbl">FEELS LIKE:</span>
+                <span class="hdr-wx-val" id="hdr-wx-feels" style="color: var(--text-main);">--°F</span>
+            </div>
+            <div class="hdr-wx-item">
+                <span class="hdr-wx-lbl">WIND / GUST:</span>
+                <span class="hdr-wx-val" id="hdr-wx-wind" style="color: var(--accent-amber);">-- / -- mph</span>
+            </div>
+            <div class="hdr-wx-item">
+                <span class="hdr-wx-lbl">HUMIDITY:</span>
+                <span class="hdr-wx-val" id="hdr-wx-humidity" style="color: var(--accent-green);">--%</span>
+            </div>
+            <div class="hdr-wx-item">
+                <span class="hdr-wx-lbl">PRESSURE:</span>
+                <span class="hdr-wx-val" id="hdr-wx-pressure" style="color: var(--accent-blue);">-- inHg</span>
             </div>
         </div>
 
-        <div class="header-telemetry">
-            <div class="telemetry-box">
-                <span class="telemetry-label">LOCAL TIME</span>
-                <span class="telemetry-val" id="live-clock">--:--:--</span>
+        <!-- Line 3: Hunting Seasons & Sector Controls -->
+        <div class="header-row-controls">
+            <div class="hunt-badge" id="hunt-seasons-badge" onclick="toggleHuntPopover(event)" title="Click to view active hunting seasons for current sector">
+                <div style="display:flex; align-items:center; gap:0.4rem; min-width:0;">
+                    <i class="fa-solid fa-bullseye"></i>
+                    <span class="hunt-badge-text" id="hunt-summary-text">HUNTING: SYNCING...</span>
+                </div>
+                <i class="fa-solid fa-chevron-down" style="font-size: 0.62rem; flex-shrink:0;"></i>
+
+                <div class="hunt-popover" id="hunt-popover" onclick="event.stopPropagation()">
+                    <div class="hunt-popover-header">
+                        <span id="hunt-popover-title">ACTIVE HUNTING SEASONS</span>
+                        <span id="hunt-popover-date" style="color: var(--text-muted); font-weight: normal;"></span>
+                    </div>
+                    <div id="hunt-seasons-list"></div>
+                </div>
             </div>
-            <div class="telemetry-box">
-                <span class="telemetry-label">PERIMETER</span>
-                <span class="telemetry-val" style="color: var(--accent-cyan);">100.0 MI / 160.9 KM</span>
-            </div>
-            <div class="telemetry-box">
-                <span class="telemetry-label">ACTIVE INTEL</span>
-                <span class="telemetry-val" id="alert-counter" style="color: var(--accent-amber);">SYNCING...</span>
+
+            <div class="header-controls">
+                <div class="loc-input-group">
+                    <input type="text" id="location-search" placeholder="City, State or ZIP..." value="Bourbonnais, IL" autocomplete="off">
+                    <button class="loc-btn" onclick="searchNewLocation()" title="Set 100-Mile Perimeter Center">
+                        <i class="fa-solid fa-magnifying-glass-location"></i> <span>SET</span>
+                    </button>
+                    <button class="loc-btn" onclick="useBrowserGPS()" title="Acquire Device GPS">
+                        <i class="fa-solid fa-location-crosshairs"></i> <span>GPS</span>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -972,8 +998,6 @@
         <div class="center-column mobile-active" id="panel-radar">
             <div class="panel-header">
                 <div class="layer-controls-scroll">
-                    <button class="tab-btn active" id="btn-nexrad-live" onclick="toggleUnlimitedNexrad()" title="Toggle Free Unlimited NOAA/IEM Real-Time NEXRAD Radar">NEXRAD</button>
-                    <button class="tab-btn active" id="btn-nws-poly" onclick="toggleNwsPolygons()" title="Toggle Free Unlimited NWS Warning Polygons">ZONES</button>
                     <button class="tab-btn" id="btn-goes-ir" onclick="toggleGoesSatellite()" title="Toggle Free Unlimited GOES Infrared Satellite">GOES IR</button>
                     <button class="tab-btn active" id="btn-boundaries" onclick="toggleBoundariesOverlay()" title="Toggle State/County Borders & City Labels Above Radar">BORDERS</button>
                     <button class="tab-btn" id="btn-map-theme" onclick="toggleMapOverlayStyle()" title="Switch Unlimited Map Basemap Style">STYLE</button>
@@ -1007,14 +1031,7 @@
                 </div>
             </div>
 
-            <!-- Bottom Live Event Console -->
-            <div class="bottom-console">
-                <div class="panel-header" style="height: 26px; font-size: 0.68rem; padding: 0 0.85rem;">
-                    <span><i class="fa-solid fa-terminal"></i> Overwatch Telemetry Log</span>
-                    <span style="color: var(--accent-green);">● LIVE</span>
-                </div>
-                <div class="console-stream" id="console-stream"></div>
-            </div>
+
         </div>
 
         <!-- Right Column: Local News & Community Events Feed -->
@@ -1214,15 +1231,7 @@
         updateLiveClock();
 
         function logConsole(tagClass, tagName, message) {
-            const stream = document.getElementById('console-stream');
-            const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false });
-            const row = document.createElement('div');
-            row.className = 'console-entry';
-            row.innerHTML = `<span class="c-time">[${timeStr}]</span><span class="c-tag ${tagClass}">${tagName}</span><span>${escapeHtml(message)}</span>`;
-            stream.prepend(row);
-            if (stream.children.length > 40) {
-                stream.removeChild(stream.lastChild);
-            }
+            // Overwatch Telemetry Log removed to maximize radar viewport
         }
 
         function escapeHtml(str) {
@@ -1541,14 +1550,24 @@
             renderRightColumn();
             plotEventMarkersOnMap();
 
-            const totalAlerts = wxEmergencyItems.length + localNewsItems.length;
-            document.getElementById('alert-counter').textContent = `${totalAlerts} ACTIVE`;
+
         }
 
-        // 5A. Open-Meteo Live Current Surface Conditions
+        function degToCompass(deg) {
+            if (typeof deg !== 'number' || isNaN(deg)) return '';
+            const dirs = [
+                'North', 'North-Northeast', 'Northeast', 'East-Northeast',
+                'East', 'East-Southeast', 'Southeast', 'South-Southeast',
+                'South', 'South-Southwest', 'Southwest', 'West-Southwest',
+                'West', 'West-Northwest', 'Northwest', 'North-Northwest'
+            ];
+            return dirs[Math.round(deg / 22.5) % 16];
+        }
+
+        // 5A. Open-Meteo Live Current Surface Conditions (including Wind Direction & Wind Chill / Apparent Temp)
         async function fetchCurrentWeather() {
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${currentSector.lat}&longitude=${currentSector.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m,surface_pressure&temperature_unit=fahrenheit&wind_speed_unit=mph`;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${currentSector.lat}&longitude=${currentSector.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure&temperature_unit=fahrenheit&wind_speed_unit=mph`;
                 const res = await fetch(url);
                 const data = await res.json();
                 const cur = data.current;
@@ -1563,16 +1582,29 @@
                     95: 'Thunderstorm', 96: 'Thunderstorm w/ Hail', 99: 'Severe Thunderstorm'
                 };
 
-                document.getElementById('wx-temp').textContent = `${Math.round(cur.temperature_2m)}°F`;
-                document.getElementById('wx-condition').textContent =
-                    `${weatherCodeMap[cur.weather_code] || 'Active Conditions'} (Feels ${Math.round(cur.apparent_temperature)}°F)`;
-                document.getElementById('wx-wind').textContent =
-                    `${Math.round(cur.wind_speed_10m)} / G${Math.round(cur.wind_gusts_10m)} mph`;
-                document.getElementById('wx-humidity').textContent = `${cur.relative_humidity_2m}%`;
-                const inHg = (cur.surface_pressure * 0.02953).toFixed(2);
-                document.getElementById('wx-pressure').textContent = `${inHg} inHg`;
+                const tempF = Math.round(cur.temperature_2m);
+                const feelsF = Math.round(cur.apparent_temperature);
+                const windMph = Math.round(cur.wind_speed_10m);
+                const gustMph = Math.round(cur.wind_gusts_10m);
+                const windDir = degToCompass(cur.wind_direction_10m);
 
-                logConsole('wx', 'SURFACE', `${currentSector.name}: ${Math.round(cur.temperature_2m)}°F, Wind ${Math.round(cur.wind_speed_10m)} mph.`);
+                const inHg = (cur.surface_pressure * 0.02953).toFixed(2);
+                const windGustStr = `${windMph} mph ${windDir} / ${gustMph} mph`.replace(/\s+/g, ' ').trim();
+
+                // Populate Header Line 2
+                document.getElementById('hdr-wx-temp').textContent = `${tempF}°F`;
+                document.getElementById('hdr-wx-feels').textContent = `${feelsF}°F`;
+                document.getElementById('hdr-wx-wind').textContent = windGustStr;
+                document.getElementById('hdr-wx-humidity').textContent = `${cur.relative_humidity_2m}%`;
+                document.getElementById('hdr-wx-pressure').textContent = `${inHg} inHg`;
+
+                // Populate Left Panel Weather Card
+                document.getElementById('wx-temp').textContent = `${tempF}°F`;
+                document.getElementById('wx-condition').textContent =
+                    `${weatherCodeMap[cur.weather_code] || 'Active Conditions'} (Feels ${feelsF}°F)`;
+                document.getElementById('wx-wind').textContent = windGustStr;
+                document.getElementById('wx-humidity').textContent = `${cur.relative_humidity_2m}%`;
+                document.getElementById('wx-pressure').textContent = `${inHg} inHg`;
             } catch (err) {
                 document.getElementById('wx-condition').textContent = 'Surface Sensor Unavailable';
             }
@@ -2015,6 +2047,7 @@
         // Boot Dashboard
         window.onload = async () => {
             initMap();
+            setTimeout(() => { if (map) map.invalidateSize(); }, 100);
             await refreshAllSectorData();
             setInterval(() => {
                 loadRainViewerRadar();

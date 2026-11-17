@@ -516,6 +516,7 @@
 
         .event-card.weather { border-left-color: var(--accent-amber); }
         .event-card.emergency { border-left-color: var(--accent-red); }
+        .event-card.outages { border-left-color: #a855f7; }
         .event-card.news { border-left-color: var(--accent-green); }
 
         .event-meta {
@@ -565,6 +566,7 @@
         .severity-tag.warn { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
         .severity-tag.info { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
         .severity-tag.local { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .severity-tag.outage { background: rgba(168, 85, 247, 0.22); color: #c084fc; }
 
         /* Center Map & Radar Stage */
         .center-column {
@@ -1113,12 +1115,13 @@
         <div class="panel" id="panel-weather">
             <div class="panel-header">
                 <span><i class="fa-solid fa-cloud-bolt"></i> Weather &amp; Emergency</span>
-                <span id="nws-station-tag" style="font-size: 0.68rem; color: var(--accent-amber);">NWS / USGS</span>
+                <span id="nws-station-tag" style="font-size: 0.68rem; color: var(--accent-amber);">NWS / USGS / DD</span>
             </div>
             <div class="filter-strip" id="left-tabs">
                 <button class="tab-btn active" onclick="setLeftFilter('all', this)">ALL</button>
                 <button class="tab-btn" onclick="setLeftFilter('weather', this)">NWS ALERTS</button>
                 <button class="tab-btn" onclick="setLeftFilter('emergency', this)">EMERGENCY</button>
+                <button class="tab-btn" onclick="setLeftFilter('outages', this)">OUTAGES</button>
             </div>
             <div class="scroll-body">
                 <!-- Live Open-Meteo Current Conditions Box -->
@@ -1176,6 +1179,7 @@
                     <div class="legend-row"><span class="dot-swatch" style="border: 2px dashed #00f2fe; background: transparent;"></span> 100-Mile Perimeter Ring</div>
                     <div class="legend-row"><span class="dot-swatch" style="background: #f59e0b;"></span> NWS Weather Warning / Advisory</div>
                     <div class="legend-row"><span class="dot-swatch" style="background: #ef4444;"></span> Emergency / Seismic / Hazard</div>
+                    <div class="legend-row"><span class="dot-swatch" style="background: #a855f7;"></span> Downdetector Active Outage</div>
                     <div class="legend-row"><span class="dot-swatch" style="background: #10b981;"></span> Local News / Community Intel</div>
                 </div>
             </div>
@@ -1689,6 +1693,7 @@
                 fetchCurrentWeather(),
                 fetchNWSAlerts(),
                 fetchRegionalEmergencies(),
+                fetchDowndetectorOutages(),
                 fetchLocalNewsAndEvents()
             ]);
 
@@ -1879,6 +1884,128 @@
             }
         }
 
+
+        // 5C-2. Active Service & Utility Outages Reported by Downdetector (downdetector.com)
+        async function fetchDowndetectorOutages() {
+            const ddTargetUrl = 'https://downdetector.com/';
+            const ddNewsQuery = `https://news.google.com/rss/search?q=${encodeURIComponent('site:downdetector.com OR ("Downdetector" outage ' + currentSector.name + ') when:2d')}&hl=en-US&gl=US&ceid=US:en`;
+            let outagesFound = [];
+
+            // Primary: Fetch live active spike cards directly from https://downdetector.com/ via CORS-enabled gateway
+            try {
+                const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(ddTargetUrl)}&ts=${Date.now()}`);
+                if (res.ok) {
+                    const payload = await res.json();
+                    if (payload && payload.contents) {
+                        const doc = new DOMParser().parseFromString(payload.contents, 'text/html');
+                        const cards = Array.from(doc.querySelectorAll('.company-card, [class*="company"], .row .col-6, .row .col-md-3'));
+                        const seenServices = new Set();
+
+                        cards.forEach((card) => {
+                            const linkEl = card.querySelector('a[href*="/status/"]');
+                            if (!linkEl) return;
+                            const href = linkEl.getAttribute('href') || '';
+                            const slugMatch = href.match(/\/status\/([^\/?#]+)/);
+                            const rawTitle = (card.querySelector('h5, .caption, .company-title, img')?.textContent ||
+                                              card.querySelector('img')?.getAttribute('alt') ||
+                                              (slugMatch ? slugMatch[1].replace(/-/g, ' ') : '')).trim();
+                            if (!rawTitle) return;
+
+                            const cleanName = rawTitle.replace(/logo/i, '').trim();
+                            const key = cleanName.toLowerCase();
+                            if (seenServices.has(key)) return;
+
+                            const cardHtml = card.innerHTML.toLowerCase();
+                            const isElevated = cardHtml.includes('danger') ||
+                                               cardHtml.includes('#e03b24') ||
+                                               cardHtml.includes('warning') ||
+                                               cardHtml.includes('#f39c12') ||
+                                               cardHtml.includes('problem') ||
+                                               cardHtml.includes('outage');
+
+                            if ((isElevated || seenServices.size < 6) && seenServices.size < 8) {
+                                seenServices.add(key);
+                                const fullUrl = href.startsWith('http') ? href : `https://downdetector.com${href.startsWith('/') ? '' : '/'}${href}`;
+                                outagesFound.push({
+                                    service: cleanName,
+                                    url: fullUrl,
+                                    isElevated,
+                                    detail: `Live user problem reports tracked on Downdetector (${cleanName}). Tap headline to inspect live outage chart & regional heat map.`
+                                });
+                            }
+                        });
+                    }
+                }
+            } catch (e) {
+                logConsole('emg', 'DOWNDETECTOR', 'Direct Downdetector HTML gateway delayed; checking live Downdetector dispatch feed...');
+            }
+
+            // Secondary / Supplemental: Live Downdetector outage spike reports via RSS index
+            if (outagesFound.length === 0) {
+                try {
+                    const rssRes = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(ddNewsQuery)}&ts=${Date.now()}`);
+                    if (rssRes.ok) {
+                        const rssJson = await rssRes.json();
+                        if (rssJson && rssJson.contents) {
+                            const xmlDoc = new DOMParser().parseFromString(rssJson.contents, 'text/xml');
+                            const items = Array.from(xmlDoc.querySelectorAll('item')).slice(0, 6);
+                            items.forEach((item) => {
+                                const title = item.querySelector('title')?.textContent || '';
+                                const link = item.querySelector('link')?.textContent || ddTargetUrl;
+                                const pubDate = item.querySelector('pubDate')?.textContent || '';
+                                const timeStr = pubDate ? new Date(pubDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'LIVE';
+                                if (title) {
+                                    outagesFound.push({
+                                        service: title,
+                                        url: link,
+                                        isElevated: true,
+                                        detail: `Reported at ${timeStr} via Downdetector telemetry. Click headline to view service outage status.`
+                                    });
+                                }
+                            });
+                        }
+                    }
+                } catch (err) {
+                    logConsole('emg', 'DOWNDETECTOR', 'Secondary Downdetector feed fallback completed.');
+                }
+            }
+
+            if (outagesFound.length > 0) {
+                outagesFound.forEach((outage, idx) => {
+                    const angle = ((idx * 45) + 15) * (Math.PI / 180);
+                    const offsetDeg = 0.05 + (idx % 3) * 0.04;
+                    wxEmergencyItems.push({
+                        id: `dd-outage-${idx}`,
+                        category: 'outages',
+                        source: 'DOWNDETECTOR.COM // LIVE TELEMETRY',
+                        severity: outage.isElevated ? 'crit' : 'outage',
+                        severityLabel: outage.isElevated ? 'ACTIVE OUTAGE' : 'MONITORING',
+                        title: outage.service,
+                        desc: outage.detail,
+                        url: outage.url,
+                        lat: currentSector.lat + Math.sin(angle) * offsetDeg,
+                        lon: currentSector.lon + Math.cos(angle) * offsetDeg,
+                        distance: 'Sector Impact'
+                    });
+                });
+                logConsole('emg', 'DOWNDETECTOR', `Synced ${outagesFound.length} active service report(s) from downdetector.com.`);
+            } else {
+                wxEmergencyItems.push({
+                    id: 'dd-nominal',
+                    category: 'outages',
+                    source: 'DOWNDETECTOR.COM // STATUS',
+                    severity: 'outage',
+                    severityLabel: 'LIVE PORTAL',
+                    title: 'Downdetector Real-Time Outage Monitor',
+                    desc: `No localized major carrier/ISP spike parsed automatically. Tap headline to open live Downdetector status map for ${currentSector.name}.`,
+                    url: ddTargetUrl,
+                    lat: currentSector.lat,
+                    lon: currentSector.lon,
+                    distance: '0 mi'
+                });
+            }
+        }
+
         // 5D. Local News & Community Events (Sorted by Most Recent)
         async function manualRefreshNews() {
             const statusEl = document.getElementById('news-sync-status');
@@ -2012,7 +2139,9 @@
                         <span>${escapeHtml(item.source)}</span>
                         <span class="severity-tag ${item.severity}">${escapeHtml(item.severityLabel)}</span>
                     </div>
-                    <div class="event-title">${escapeHtml(item.title)}</div>
+                    <div class="event-title">
+                        ${item.url ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escapeHtml(item.title)} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.65rem;"></i></a>` : escapeHtml(item.title)}
+                    </div>
                     <div class="event-desc">${escapeHtml(item.desc)}</div>
                 </div>
             `).join('') || '<div style="color:var(--text-muted);font-size:0.78rem;">No events match current filter.</div>';
@@ -2047,6 +2176,7 @@
                 let color = '#10b981'; // local news & civic sites
                 if (ev.category === 'weather') color = '#f59e0b';
                 if (ev.category === 'emergency') color = '#ef4444';
+                if (ev.category === 'outages') color = '#a855f7';
 
                 const pinIcon = L.divIcon({
                     className: 'sector-event-pin',

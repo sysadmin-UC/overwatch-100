@@ -824,31 +824,29 @@
                 font-size: 0.74rem;
             }
 
-            /* Wrap weather telemetry cleanly onto two legible rows on mobile */
+            /* Center all weather telemetry on 3 tight, legible lines on mobile */
             .header-row-wx {
-                justify-content: space-between;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
                 flex-wrap: wrap;
-                padding: 0.22rem 0.45rem;
-                font-size: 0.68rem;
-                row-gap: 0.22rem;
-                column-gap: 0.4rem;
+                padding: 0.16rem 0.35rem;
+                font-size: 0.67rem;
+                line-height: 1.1;
+                row-gap: 0.1rem;
+                column-gap: 0.65rem;
             }
 
             .hdr-wx-item {
-                gap: 0.24rem;
+                justify-content: center;
+                gap: 0.22rem;
+                line-height: 1.1;
             }
 
-            .hdr-wx-item-primary {
-                flex: 1 1 45%;
-            }
-
-            .hdr-wx-item-primary:last-of-type {
-                justify-content: flex-end;
-            }
-
-            .hdr-wx-item-secondary {
-                border-top: 1px dashed rgba(30, 41, 59, 0.85);
-                padding-top: 0.2rem;
+            .hdr-wx-item-wind {
+                flex: 0 0 100%;
+                width: 100%;
+                justify-content: center;
             }
 
             .hdr-wx-lbl {
@@ -1063,23 +1061,23 @@
 
         <!-- Line 2: Current Temp, Feels Like, Wind / Gust, Humidity, and Pressure -->
         <div class="header-row-wx" aria-label="Current Weather Telemetry">
-            <div class="hdr-wx-item hdr-wx-item-primary">
+            <div class="hdr-wx-item">
                 <span class="hdr-wx-lbl">TEMP:</span>
                 <span class="hdr-wx-val" id="hdr-wx-temp">--°F</span>
             </div>
-            <div class="hdr-wx-item hdr-wx-item-primary">
+            <div class="hdr-wx-item">
                 <span class="hdr-wx-lbl">FEELS LIKE:</span>
                 <span class="hdr-wx-val" id="hdr-wx-feels" style="color: var(--text-main);">--°F</span>
             </div>
-            <div class="hdr-wx-item hdr-wx-item-secondary">
+            <div class="hdr-wx-item hdr-wx-item-wind">
                 <span class="hdr-wx-lbl">WIND / GUST:</span>
                 <span class="hdr-wx-val" id="hdr-wx-wind" style="color: var(--accent-amber);">-- / -- mph</span>
             </div>
-            <div class="hdr-wx-item hdr-wx-item-secondary">
+            <div class="hdr-wx-item">
                 <span class="hdr-wx-lbl">HUMIDITY:</span>
                 <span class="hdr-wx-val" id="hdr-wx-humidity" style="color: var(--accent-green);">--%</span>
             </div>
-            <div class="hdr-wx-item hdr-wx-item-secondary">
+            <div class="hdr-wx-item">
                 <span class="hdr-wx-lbl">PRESSURE:</span>
                 <span class="hdr-wx-val" id="hdr-wx-pressure" style="color: var(--accent-blue);">-- inHg</span>
             </div>

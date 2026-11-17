@@ -56,7 +56,7 @@
         header {
             background-color: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
-            padding: 0.45rem 0.9rem;
+            padding: calc(0.45rem + env(safe-area-inset-top, 0px)) 0.9rem 0.45rem 0.9rem;
             display: flex;
             flex-direction: column;
             gap: 0.4rem;
@@ -802,91 +802,64 @@
         }
 
         @media (max-width: 1100px) {
-            /* Safe-area padding & ultra-compact Header so full top bar fits cleanly on iPhone/mobile screens */
-            body {
-                padding-top: env(safe-area-inset-top, 0px);
-            }
-
+            /* Compact Header to maximize radar map height */
             header {
-                padding: 0.2rem 0.45rem;
-                gap: 0.18rem;
-            }
-
-            .header-row-top {
-                gap: 0.35rem;
-            }
-
-            .brand {
-                gap: 0.42rem;
+                padding: calc(0.28rem + env(safe-area-inset-top, 0px)) 0.5rem 0.28rem 0.5rem;
+                gap: 0.24rem;
             }
 
             .overwatch-logo {
-                width: 22px;
-                height: 22px;
+                width: 28px;
+                height: 28px;
             }
 
             .brand h1 {
-                font-size: 0.86rem;
-                letter-spacing: 1px;
-            }
-
-            .brand h1 .num-tag {
-                font-size: 0.66rem;
-                padding: 0.01rem 0.26rem;
+                font-size: 0.96rem;
+                letter-spacing: 1.2px;
             }
 
             .brand-sub {
-                display: none; /* Hide subtitle on mobile to reclaim vertical space */
-            }
-
-            .header-telemetry {
-                gap: 0.5rem;
-            }
-
-            .telemetry-box {
-                flex-direction: row;
-                align-items: baseline;
-                gap: 0.3rem;
+                display: none; /* Hide subtitle on mobile to reclaim vertical map space */
             }
 
             .telemetry-label {
-                font-size: 0.52rem;
+                font-size: 0.54rem;
             }
 
             .telemetry-val {
-                font-size: 0.7rem;
+                font-size: 0.74rem;
             }
 
             .header-row-wx {
                 justify-content: space-between;
                 flex-wrap: nowrap;
-                padding: 0.14rem 0.35rem;
-                font-size: 0.6rem;
-                gap: 0.3rem;
+                padding: 0.18rem 0.38rem;
+                font-size: 0.63rem;
+                gap: 0.35rem;
             }
 
             .hdr-wx-item {
-                gap: 0.18rem;
+                gap: 0.2rem;
             }
 
             .hdr-wx-lbl {
-                font-size: 0.54rem;
+                font-size: 0.56rem;
             }
 
             /* Put Hunting badge & Location search on a single compact row on mobile */
             .header-row-controls {
                 flex-direction: row;
                 align-items: center;
-                gap: 0.28rem;
+                gap: 0.3rem;
             }
 
             .hunt-badge {
                 flex: 1 1 42%;
                 min-width: 0;
                 max-width: none;
-                padding: 0.14rem 0.35rem;
-                font-size: 0.58rem;
-                height: 24px;
+                padding: 0.18rem 0.4rem;
+                font-size: 0.62rem;
+                height: 28px;
                 justify-content: space-between;
             }
 
@@ -902,23 +875,23 @@
 
             .loc-input-group {
                 width: 100%;
-                height: 24px;
+                height: 28px;
             }
 
             .loc-input-group input {
                 flex: 1;
                 min-width: 0;
                 width: auto;
-                padding: 0 0.38rem;
+                padding: 0 0.42rem;
                 font-size: 16px; /* Prevents iOS Safari auto-zoom on focus */
-                transform: scale(0.78);
+                transform: scale(0.82);
                 transform-origin: left center;
             }
 
             .loc-btn {
-                padding: 0 0.4rem;
-                font-size: 0.6rem;
-                gap: 0.18rem;
+                padding: 0 0.45rem;
+                font-size: 0.64rem;
+                gap: 0.2rem;
             }
 
             .main-grid {
@@ -939,46 +912,46 @@
                 display: flex;
             }
 
-            /* Ultra-compact Radar Layer Toolbar & GOES IR / BORDERS / STYLE buttons */
+            /* Ultra-compact Radar Layer Toolbar & Much Smaller GOES IR / BORDERS / STYLE buttons */
             #panel-radar .panel-header {
-                padding: 0.16rem 0.42rem;
-                min-height: 22px;
+                padding: 0.2rem 0.45rem;
+                min-height: 24px;
             }
 
             #panel-radar .layer-controls-scroll {
-                gap: 0.2rem;
+                gap: 0.22rem;
             }
 
             #btn-goes-ir,
             #btn-boundaries,
             #btn-map-theme {
-                min-height: 17px !important;
-                height: 17px !important;
-                padding: 0 0.3rem !important;
-                font-size: 0.54rem !important;
+                min-height: 18px !important;
+                height: 18px !important;
+                padding: 0 0.34rem !important;
+                font-size: 0.56rem !important;
                 line-height: 1 !important;
                 letter-spacing: 0.3px;
                 border-radius: 2px;
             }
 
             #radar-frame-timestamp {
-                font-size: 0.56rem !important;
+                font-size: 0.58rem !important;
             }
 
-            /* Compact Mobile Bottom Navigation Bar to keep full dashboard framed in viewport */
+            /* Compact Mobile Bottom Navigation Bar to expand map viewport */
             .mobile-nav {
                 display: flex;
             }
 
             .mobile-nav-btn {
-                min-height: 38px;
-                padding: 0.22rem 0.15rem;
-                font-size: 0.58rem;
-                gap: 0.12rem;
+                min-height: 42px;
+                padding: 0.3rem 0.2rem;
+                font-size: 0.62rem;
+                gap: 0.16rem;
             }
 
             .mobile-nav-btn i {
-                font-size: 0.82rem;
+                font-size: 0.88rem;
             }
 
             .radar-hud-overlay {
@@ -1002,24 +975,27 @@
             }
 
             .tab-btn {
-                min-height: 26px;
-                padding: 0.2rem 0.45rem;
-                font-size: 0.64rem;
+                min-height: 28px;
+                padding: 0.24rem 0.5rem;
+                font-size: 0.66rem;
             }
         }
 
         @media (max-width: 420px) {
             .brand h1 {
-                font-size: 0.84rem;
-                letter-spacing: 1px;
+                font-size: 0.98rem;
+                letter-spacing: 1.2px;
             }
             .brand h1 .num-tag {
-                font-size: 0.64rem;
-                padding: 0.01rem 0.24rem;
+                font-size: 0.7rem;
+                padding: 0.02rem 0.28rem;
+            }
+            .brand-sub {
+                font-size: 0.54rem;
             }
             .overwatch-logo {
-                width: 20px;
-                height: 20px;
+                width: 32px;
+                height: 32px;
             }
         }
     </style>
